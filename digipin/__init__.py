@@ -1,0 +1,103 @@
+"""
+digipin — Official DIGIPIN Implementation for India
+
+A Python reference implementation of the official DIGIPIN specification
+published by the Department of Posts, Government of India (March 2025).
+
+DIGIPIN is India’s national geocoding and addressing grid system,
+dividing the entire geographic territory into uniform 3.8m × 3.8m cells,
+each assigned a unique 10-character alphanumeric code.
+
+Basic Usage:
+    >>> from digipin import encode, decode, is_valid
+
+    # Encode coordinates to a DIGIPIN code
+    >>> code = encode(28.622788, 77.213033)  # Dak Bhawan, New Delhi
+    >>> print(code)
+    '39J49LL8T4'
+
+    # Decode a DIGIPIN code back to coordinates
+    >>> lat, lon = decode("39J49LL8T4")
+    >>> print(f"({lat:.6f}, {lon:.6f})")
+    (28.622788, 77.213033)
+
+    # Validate a DIGIPIN code
+    >>> is_valid("39J49LL8T4")
+    True
+
+Official Specification:
+    Department of Posts, Ministry of Communications
+    Government of India — March 2025
+
+Project Links:
+    GitHub: https://github.com/DEADSERPENT/digipinpy
+    PyPI:   https://pypi.org/project/digipinpy
+"""
+
+__version__ = "1.0.0"
+__author__ = "SAMARTHA H V"
+__license__ = "MIT"
+
+
+# Core functions
+from .encoder import encode, batch_encode, encode_with_bounds
+from .decoder import (
+    decode,
+    get_bounds,
+    decode_with_bounds,
+    batch_decode,
+    get_parent,
+    is_within,
+)
+from .utils import (
+    is_valid_digipin as is_valid,
+    is_valid_coordinate,
+    get_precision_info,
+    get_grid_size,
+    get_approx_distance,
+    # Constants
+    LAT_MIN,
+    LAT_MAX,
+    LON_MIN,
+    LON_MAX,
+    DIGIPIN_ALPHABET,
+    DIGIPIN_LEVELS,
+)
+
+# Public API
+__all__ = [
+    # Core functions
+    "encode",
+    "decode",
+    "is_valid",
+
+    # Batch operations
+    "batch_encode",
+    "batch_decode",
+
+    # Additional functions
+    "get_bounds",
+    "encode_with_bounds",
+    "decode_with_bounds",
+    "get_parent",
+    "is_within",
+
+    # Utilities
+    "is_valid_coordinate",
+    "get_precision_info",
+    "get_grid_size",
+    "get_approx_distance",
+
+    # Constants
+    "LAT_MIN",
+    "LAT_MAX",
+    "LON_MIN",
+    "LON_MAX",
+    "DIGIPIN_ALPHABET",
+    "DIGIPIN_LEVELS",
+
+    # Metadata
+    "__version__",
+    "__author__",
+    "__license__",
+]
