@@ -1,11 +1,12 @@
 # digipinpy
 
 [![PyPI version](https://badge.fury.io/py/digipinpy.svg)](https://badge.fury.io/py/digipinpy)
-![Python Version](https://img.shields.io/badge/Python-3.7%2B-blue.svg)   
+![Python Version](https://img.shields.io/badge/Python-3.7%2B-blue.svg)
 [![License](https://img.shields.io/pypi/l/digipinpy.svg)](https://github.com/DEADSERPENT/digipinpy/blob/main/LICENSE)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](https://github.com/DEADSERPENT/digipinpy/actions)
-[![Downloads](https://static.pepy.tech/badge/digipinpy)](https://pepy.tech/project/digipinpy)
+
 **A high-precision national geocoding system for India — encode and decode DIGIPIN codes with ~3.8m accuracy.**
+
 
 Official Python implementation of **DIGIPIN** (Digital Postal Index Number), the national geocoding standard for India developed by the Department of Posts, Ministry of Communications, Government of India.
 
