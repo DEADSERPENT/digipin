@@ -5,34 +5,38 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "digipinpy"
 version = "1.0.0"
-description = "Official DIGIPIN implementation for India - Department of Posts specification"
+description = "Official Python implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
 readme = "README.md"
 requires-python = ">=3.7"
 license = {text = "MIT"}
-keywords = [
-    "geocoding",
-    "geolocation",
-    "digipin",
-    "india",
-    "gis",
-    "mapping",
-    "location",
-    "coordinates",
-    "latitude",
-    "longitude",
-]
 authors = [
     {name = "SAMARTHA H V", email = "samarthsmg14@gmail.com"}
 ]
 maintainers = [
     {name = "MR SHIVAKUMAR", email = "hmrshivu@gmail.com"}
 ]
+keywords = [
+    "digipin",
+    "geocoding",
+    "geolocation",
+    "india",
+    "gis",
+    "addressing",
+    "postal",
+    "location",
+    "coordinates",
+    "government",
+    "department-of-posts",
+]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
+    "Intended Audience :: Information Technology",
     "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
     "Operating System :: OS Independent",
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
@@ -40,9 +44,13 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Scientific/Engineering :: GIS",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities",
+    "Typing :: Typed",
 ]
 
 dependencies = []
@@ -62,9 +70,11 @@ test = [
 
 [project.urls]
 Homepage = "https://github.com/DEADSERPENT/digipinpy"
-Documentation = "https://github.com/DEADSERPENT/digipinpy#readme"
+Documentation = "https://github.com/DEADSERPENT/digipinpy/blob/main/DOCUMENTATION.md"
 Repository = "https://github.com/DEADSERPENT/digipinpy"
-"Bug Tracker" = "https://github.com/DEADSERPENT/digipinpy/issues"
+"Issue Tracker" = "https://github.com/DEADSERPENT/digipinpy/issues"
+"Source Code" = "https://github.com/DEADSERPENT/digipinpy"
+Changelog = "https://github.com/DEADSERPENT/digipinpy/releases"
 
 [project.scripts]
 digipin = "digipin.cli:main"
@@ -105,7 +115,7 @@ exclude_lines = [
 
 [tool.black]
 line-length = 88
-target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
+target-version = ['py37', 'py38', 'py39', 'py310', 'py311', 'py312']
 include = '\.pyi?$'
 exclude = '''
 /(

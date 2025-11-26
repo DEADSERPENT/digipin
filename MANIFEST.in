@@ -1,9 +1,12 @@
 include README.md
+include DOCUMENTATION.md
+include DIGIPIN_Technical_Document.md
 include LICENSE
 include pyproject.toml
 
 recursive-include digipin *.py
 recursive-include tests *.py
+recursive-include images *.png
 
 exclude .gitignore
 exclude .coverage

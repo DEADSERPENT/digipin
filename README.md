@@ -1,226 +1,122 @@
-# DIGIPIN - Official Python Implementation
+# digipinpy
 
-[![Tests](https://img.shields.io/badge/tests-31%20passed-brightgreen)](tests/)
-[![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
+[![PyPI version](https://badge.fury.io/py/digipinpy.svg)](https://badge.fury.io/py/digipinpy)
+[![Python](https://img.shields.io/pypi/pyversions/digipinpy.svg)](https://pypi.org/project/digipinpy/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](tests/)
 
-**Official Python implementation of DIGIPIN (Digital Postal Index Number)**, the national-level addressing grid system for India developed by the Department of Posts, Government of India (March 2025).
+Official Python implementation of **DIGIPIN** (Digital Postal Index Number), the national geocoding standard for India developed by the Department of Posts, Ministry of Communications, Government of India.
 
-DIGIPIN divides India's entire geographic territory into uniform grid cells, each identified by a unique 10-character alphanumeric code with ~3.8m precision.
+DIGIPIN provides a standardized 10-character alphanumeric code for any location in India with ~3.8 meter precision, covering the entire geographic territory including maritime Exclusive Economic Zone.
 
-## 🎯 What is DIGIPIN?
-
-DIGIPIN is India's next-generation location addressing system that:
-
-- **Covers all of India**: Entire territory including maritime Exclusive Economic Zone (EEZ)
-- **Hierarchical precision**: 10 levels from regional (~1000 km) to precise (~3.8 m)
-- **Simple 10-character codes**: Using 16 unambiguous symbols (2-9, C, F, J, K, L, M, P, T)
-- **Directional properties**: Spiral anticlockwise pattern enables geographic queries
-- **Government standard**: Official specification by Department of Posts
-
-### Example Locations
-
-| Location | Coordinates | DIGIPIN Code |
-|----------|-------------|--------------|
-| **Dak Bhawan, New Delhi** | 28.622788°N, 77.213033°E | `39J49LL8T4` |
-| India Post HQ | Official government example | ✅ Verified |
-
-## 🚀 Quick Start
-
-### Installation
+## Installation
 
 ```bash
 pip install digipinpy
 ```
 
-### Basic Usage
+## Quick Start
 
 ```python
 from digipin import encode, decode
 
-# Encode coordinates to DIGIPIN
-code = encode(28.622788, 77.213033)
+# Encode coordinates to DIGIPIN code
+code = encode(28.622788, 77.213033)  # Dak Bhawan, New Delhi
 print(code)  # Output: 39J49LL8T4
 
-# Decode DIGIPIN to coordinates
+# Decode DIGIPIN code to coordinates
 lat, lon = decode('39J49LL8T4')
 print(f"{lat:.6f}, {lon:.6f}")  # Output: 28.622788, 77.213033
-
-# Validate a DIGIPIN code
-from digipin import is_valid
-print(is_valid('39J49LL8T4'))  # Output: True
 ```
 
-## 📖 Complete Guide
+## Features
 
-See full documentation in the sections below:
+- **Zero Dependencies** - Pure Python implementation
+- **High Precision** - ~3.8m accuracy at level 10
+- **Hierarchical** - Variable precision from 1km to 3.8m
+- **Validated** - 100% compliant with official specification
+- **Comprehensive** - Complete coverage of India's geographic territory
+- **Well-Tested** - 31 test cases covering all edge cases
 
-- [Encoding Coordinates](#encoding-coordinates)
-- [Decoding DIGIPIN Codes](#decoding-digipin-codes)
-- [Batch Operations](#batch-operations)
-- [Hierarchical Operations](#hierarchical-operations)
-- [API Reference](#api-reference)
-- [Testing](#testing)
+## Documentation
 
-### Encoding Coordinates
+For detailed documentation, examples, and API reference, see [DOCUMENTATION.md](DOCUMENTATION.md)
 
+## Specification
+
+This implementation strictly follows the official DIGIPIN specification published by:
+- **Department of Posts**, Ministry of Communications, Government of India
+- **Technical Document** – Final Version, March 2025
+
+### Coverage Area
+- **Latitude**: 2.5°N to 38.5°N
+- **Longitude**: 63.5°E to 99.5°E
+- **Coordinate System**: EPSG:4326 (WGS84)
+
+### Character Set
+16-symbol alphabet: `23456789CFJKLMPT`
+
+## API Overview
+
+### Core Functions
 ```python
-from digipin import encode, encode_with_bounds
-
-# Basic encoding (full 10-character precision)
-code = encode(28.622788, 77.213033)
-print(code)  # '39J49LL8T4'
-
-# Encode with custom precision (1-10 characters)
-regional = encode(28.622788, 77.213033, precision=4)  # ~15 km
-print(regional)  # '39J4'
-
-neighborhood = encode(28.622788, 77.213033, precision=6)  # ~1 km
-print(neighborhood)  # '39J49L'
-
-# Get code with bounding box
-result = encode_with_bounds(28.622788, 77.213033)
-print(result['code'])  # '39J49LL8T4'
-```
-
-### Decoding DIGIPIN Codes
-
-```python
-from digipin import decode, get_bounds
-
-# Basic decoding (returns center point)
-lat, lon = decode('39J49LL8T4')
-print(f"{lat}, {lon}")  # 28.622788, 77.213033
-
-# Get bounding box of the grid cell
-min_lat, max_lat, min_lon, max_lon = get_bounds('39J49LL8T4')
-print(f"Cell: {min_lat} to {max_lat}, {min_lon} to {max_lon}")
+encode(lat, lon, *, precision=10)       # Coordinates → DIGIPIN
+decode(code)                             # DIGIPIN → Coordinates
+is_valid(code)                           # Validate DIGIPIN code
 ```
 
 ### Batch Operations
-
 ```python
-from digipin import batch_encode, batch_decode
-
-# Encode multiple locations at once
-coordinates = [
-    (28.622788, 77.213033),  # Dak Bhawan
-    (12.9716, 77.5946),      # Bengaluru
-    (19.0760, 72.8777),      # Mumbai
-]
-
-codes = batch_encode(coordinates)
-print(codes)  # ['39J49LL8T4', '4P3JK852C9', '4FK5958823']
+batch_encode(coordinates)                # Encode multiple locations
+batch_decode(codes)                      # Decode multiple codes
 ```
 
 ### Hierarchical Operations
-
 ```python
-from digipin import get_parent, is_within
-
-# Get parent codes at different levels
-code = '39J49LL8T4'
-region = get_parent(code, 1)      # '3' (~1000 km)
-city = get_parent(code, 4)        # '39J4' (~15 km)
-
-# Check if a code is within a region
-print(is_within('39J49LL8T4', '39J4'))   # True
-print(is_within('39J49LL8T4', '48'))     # False
+get_parent(code, level)                  # Get parent region code
+is_within(child_code, parent_code)       # Check containment
+get_bounds(code)                         # Get grid cell boundaries
 ```
 
-## 🏗️ Technical Specification
+## Testing
 
-### Algorithm Overview
-
-DIGIPIN uses hierarchical 4×4 grid subdivision:
-
-1. **Bounding Box**: India's official bounding box (36° × 36°)
-   - Latitude: 2.5°N to 38.5°N
-   - Longitude: 63.5°E to 99.5°E
-
-2. **Subdivision**: 10 levels of 4×4 grids using spiral anticlockwise pattern
-
-3. **Final Precision**: 4^10 divisions → ~3.8m × 3.8m cells
-
-### Official Alphabet
-
-16 symbols chosen for clarity:
-- **Numbers (8)**: 2, 3, 4, 5, 6, 7, 8, 9
-- **Letters (8)**: C, F, J, K, L, M, P, T
-- **Excluded**: 0, 1, O, I, G, W, X (avoid confusion)
-
-## ✅ Testing
-
-Comprehensive test suite with 31 tests:
-
-- ✅ Official Dak Bhawan example verified
-- ✅ Round-trip accuracy (< 5m)
-- ✅ All boundary conditions
-- ✅ Hierarchical operations
-- ✅ Batch operations
-
-Run tests:
 ```bash
 pytest tests/ -v
 ```
 
-**Result**: 31/31 tests pass ✅
+All 31 tests pass with 100% specification compliance.
 
-## 🔧 API Reference
+## Requirements
 
-### Core Functions
+- Python 3.7+
+- No external dependencies
 
-- `encode(lat, lon, *, precision=10)` → `str`
-- `decode(code)` → `Tuple[float, float]`
-- `is_valid(code)` → `bool`
+## License
 
-### Batch Operations
+MIT License - see [LICENSE](LICENSE) file for details.
 
-- `batch_encode(coordinates)` → `List[str]`
-- `batch_decode(codes)` → `List[Tuple[float, float]]`
+## Links
 
-### Hierarchical Operations
+- **Documentation**: [DOCUMENTATION.md](DOCUMENTATION.md)
+- **Source Code**: https://github.com/DEADSERPENT/digipinpy
+- **Issue Tracker**: https://github.com/DEADSERPENT/digipinpy/issues
+- **PyPI**: https://pypi.org/project/digipinpy/
 
-- `get_parent(code, level)` → `str`
-- `is_within(child_code, parent_code)` → `bool`
-- `get_bounds(code)` → `Tuple[float, float, float, float]`
+## Citation
 
-### Constants
-
-- `LAT_MIN`, `LAT_MAX`: 2.5° to 38.5°
-- `LON_MIN`, `LON_MAX`: 63.5° to 99.5°
-- `DIGIPIN_ALPHABET`: '23456789CFJKLMPT'
-- `DIGIPIN_LEVELS`: 10
-
-## 📦 Package Structure
+If you use this library in research or production, please cite:
 
 ```
-digipin/
-├── digipin/
-│   ├── __init__.py      # Public API
-│   ├── encoder.py       # Coordinate → DIGIPIN
-│   ├── decoder.py       # DIGIPIN → coordinate
-│   └── utils.py         # Constants & validation
-├── tests/
-│   └── test_official_spec.py  # 31 comprehensive tests
-├── README.md            # This file
-├── LICENSE              # MIT License
-└── pyproject.toml       # Package configuration
+Department of Posts, Ministry of Communications, Government of India.
+"Digital Postal Index Number (DIGIPIN) - Technical Document, Final Version."
+March 2025.
 ```
 
-## 🤝 Contributing
+## Authors
 
-Contributions welcome! Please ensure all tests pass.
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- **Department of Posts, Government of India** - Official DIGIPIN specification
-- **Ministry of Communications** - National addressing initiative
+**SAMARTHA H V** - Lead Developer
+**MR SHIVAKUMAR** - Maintainer
 
 ---
 
-**Made for India's Digital Addressing**
+**Government of India | Department of Posts | National Addressing Initiative**
