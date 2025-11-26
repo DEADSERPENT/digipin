@@ -1,4 +1,4 @@
-python -m twine upload dist/*# Digital Postal Index Number (DIGIPIN)
+# Digital Postal Index Number (DIGIPIN)
 ## National Level Addressing Grid
 
 ### Technical Document – Final version

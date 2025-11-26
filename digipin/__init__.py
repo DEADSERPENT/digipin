@@ -34,7 +34,7 @@ Project Links:
     PyPI:   https://pypi.org/project/digipinpy
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 

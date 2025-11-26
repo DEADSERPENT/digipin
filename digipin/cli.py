@@ -8,6 +8,15 @@ import sys
 import argparse
 from typing import Optional
 
+# Fix Windows console encoding for unicode characters
+if sys.platform == 'win32':
+    try:
+        import io
+        if hasattr(sys.stdout, 'buffer'):
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    except:
+        pass  # Fallback to ASCII-safe characters if encoding fix fails
+
 from . import (
     encode,
     decode,
@@ -26,7 +35,19 @@ def cmd_encode(args):
             args.longitude,
             precision=args.precision
         )
-        print(code)
+
+        if args.format == 'json':
+            import json
+            output = {
+                'code': code,
+                'latitude': args.latitude,
+                'longitude': args.longitude,
+                'precision': args.precision
+            }
+            print(json.dumps(output, indent=2))
+        else:
+            print(code)
+
         return 0
     except ValueError as e:
         print(f"Error: {e}", file=sys.stderr)
@@ -75,7 +96,26 @@ def cmd_validate(args):
     """Handle the validate command."""
     valid = is_valid(args.code)
 
-    if args.detailed:
+    if args.format == 'json':
+        import json
+        output = {
+            'code': args.code,
+            'valid': valid
+        }
+        if valid and args.detailed:
+            try:
+                lat, lon = decode(args.code)
+                output['latitude'] = lat
+                output['longitude'] = lon
+            except:
+                pass
+        elif not valid and args.detailed:
+            output['expected_format'] = {
+                'length': 10,
+                'symbols': '23456789CFJKLMPT'
+            }
+        print(json.dumps(output, indent=2))
+    elif args.detailed:
         if valid:
             print("✓ Valid DIGIPIN code")
             try:
@@ -157,6 +197,12 @@ For more information, visit: https://github.com/DEADSERPENT/digipinpy
         default=10,
         help='Code length (1-10, default: 10)'
     )
+    encode_parser.add_argument(
+        '-f', '--format',
+        choices=['text', 'json'],
+        default='text',
+        help='Output format (default: text)'
+    )
     encode_parser.set_defaults(func=cmd_encode)
 
     # Decode command
@@ -208,6 +254,12 @@ For more information, visit: https://github.com/DEADSERPENT/digipinpy
         '-d', '--detailed',
         action='store_true',
         help='Show detailed validation information'
+    )
+    validate_parser.add_argument(
+        '-f', '--format',
+        choices=['text', 'json'],
+        default='text',
+        help='Output format (default: text)'
     )
     validate_parser.set_defaults(func=cmd_validate)
 

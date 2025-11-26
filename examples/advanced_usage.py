@@ -2,13 +2,20 @@
 Advanced usage examples for digipin-py
 """
 
+import sys
+import io
+
+# Fix Windows console encoding for unicode characters
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 from digipin import (
     encode,
     decode,
-    bounding_box,
+    get_bounds,
     batch_encode,
     batch_decode,
-    validate_with_details,
+    is_valid,
     get_precision_info,
 )
 
@@ -17,9 +24,9 @@ print("=" * 60)
 print("Example 1: Bounding Box")
 print("=" * 60)
 
-code = "RG9GB8KLSF"
+code = "39J49LL8T4"  # Dak Bhawan, New Delhi
 lat, lon = decode(code)
-min_lat, max_lat, min_lon, max_lon = bounding_box(code)
+min_lat, max_lat, min_lon, max_lon = get_bounds(code)
 
 print(f"DIGIPIN Code: {code}")
 print(f"Center Point: ({lat:.6f}, {lon:.6f})")
@@ -57,27 +64,29 @@ for code, (lat, lon) in zip(codes, decoded):
 
 print()
 
-# Example 3: Detailed Validation
+# Example 3: Validation
 print("=" * 60)
-print("Example 3: Detailed Validation")
+print("Example 3: Validation")
 print("=" * 60)
 
 test_codes = [
-    "RG9GB8KLSF",     # Valid
-    "INVALID",        # Too short
-    "RG9GB8KL@@",     # Invalid characters
-    "RG9GB8KLXX",     # Wrong checksum
-    "rg9gb8klsf",     # Lowercase (valid but warning)
+    ("39J49LL8T4", "Valid DIGIPIN"),
+    ("INVALID", "Too short"),
+    ("RG9GB8KL@@", "Invalid characters"),
+    ("12345", "Too short"),
+    ("39J49LL8T4XXX", "Too long"),
 ]
 
-for code in test_codes:
-    result = validate_with_details(code)
-    print(f"\nCode: {code}")
-    print(f"Valid: {result['valid']}")
-    if result['errors']:
-        print(f"Errors: {', '.join(result['errors'])}")
-    if result['warnings']:
-        print(f"Warnings: {', '.join(result['warnings'])}")
+for code, description in test_codes:
+    valid = is_valid(code)
+    status = "✓ Valid" if valid else "✗ Invalid"
+    print(f"{status:12} {code:15} ({description})")
+    if valid:
+        try:
+            lat, lon = decode(code)
+            print(f"            → Decodes to: ({lat:.6f}, {lon:.6f})")
+        except:
+            pass
 
 print()
 
@@ -89,39 +98,41 @@ print("=" * 60)
 lat, lon = 28.6139, 77.2090
 
 for k in [3, 4, 5]:
-    code = encode(lat, lon, chars_per_axis=k)
+    code = encode(lat, lon, precision=k)
     info = get_precision_info(k)
 
     print(f"\nPrecision Level k={k}:")
     print(f"  Code: {code}")
-    print(f"  Length: {info['total_code_length']} characters")
-    print(f"  Resolution: ~{info['lat_resolution_m']:.2f}m × {info['lon_resolution_m']:.2f}m")
+    print(f"  Length: {info['code_length']} characters")
+    print(f"  Resolution: ~{info['approx_distance_m']:.2f} meters")
+    print(f"  Description: {info['description']}")
 
 print()
 
-# Example 5: Privacy Mode (Lower Precision)
+# Example 5: Variable Precision Encoding
 print("=" * 60)
-print("Example 5: Privacy Mode (Approximate Location)")
+print("Example 5: Variable Precision Encoding")
 print("=" * 60)
 
-exact_lat, exact_lon = 28.6139, 77.2090
+lat, lon = 28.6139, 77.2090
 
-# High precision (exact location)
-exact_code = encode(exact_lat, exact_lon, chars_per_axis=4)
-exact_decoded = decode(exact_code, chars_per_axis=4)
+print(f"Original coordinates: ({lat}, {lon})")
+print("\nDifferent precision levels:")
 
-# Low precision (approximate location)
-approx_code = encode(exact_lat, exact_lon, chars_per_axis=3)
-approx_decoded = decode(approx_code, chars_per_axis=3)
+for precision_level in [5, 7, 10]:
+    code = encode(lat, lon, precision=precision_level)
+    info = get_precision_info(precision_level)
 
-print(f"Exact Location (k=4):")
-print(f"  Code: {exact_code}")
-print(f"  Decoded: ({exact_decoded[0]:.6f}, {exact_decoded[1]:.6f})")
-print(f"  Resolution: ~2 meters")
+    print(f"\nPrecision {precision_level}:")
+    print(f"  Code: {code}")
+    print(f"  Description: {info['description']}")
+    print(f"  Resolution: ~{info['approx_distance_m']:.2f} meters")
 
-print(f"\nApproximate Location (k=3):")
-print(f"  Code: {approx_code}")
-print(f"  Decoded: ({approx_decoded[0]:.6f}, {approx_decoded[1]:.6f})")
-print(f"  Resolution: ~70 meters")
+    # Full 10-character codes can be decoded
+    if precision_level == 10:
+        decoded_lat, decoded_lon = decode(code)
+        print(f"  Decoded: ({decoded_lat:.6f}, {decoded_lon:.6f})")
 
-print(f"\nDifference: {abs(exact_decoded[0] - approx_decoded[0]) * 111000:.1f}m")
+print("\nUse Case: Share a 5-character code for approximate location")
+print("to protect exact address privacy, or use full 10 characters")
+print("for precise delivery locations.")

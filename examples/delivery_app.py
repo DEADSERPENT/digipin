@@ -2,7 +2,14 @@
 Real-world example: Simple delivery tracking system using DIGIPIN
 """
 
-from digipin import encode, decode, bounding_box, is_valid
+import sys
+import io
+
+# Fix Windows console encoding for unicode characters
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+from digipin import encode, decode, get_bounds, is_valid
 from datetime import datetime
 
 class DeliveryLocation:
@@ -19,7 +26,7 @@ class DeliveryLocation:
 
     def get_address_summary(self):
         """Get a summary of the location."""
-        min_lat, max_lat, min_lon, max_lon = bounding_box(self.code)
+        min_lat, max_lat, min_lon, max_lon = get_bounds(self.code)
         area = (max_lat - min_lat) * (max_lon - min_lon) * 111000 * 111000  # rough m²
 
         return {
@@ -87,7 +94,7 @@ print("Delivery Verification")
 print("=" * 70)
 
 # Driver scans a DIGIPIN code
-scanned_code = "RG9GB8KLSF"  # Warehouse code
+scanned_code = "39J49LL8T4"  # Example warehouse code
 
 if trip.verify_location(scanned_code):
     lat, lon = decode(scanned_code)
