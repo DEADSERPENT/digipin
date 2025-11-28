@@ -34,7 +34,7 @@ Project Links:
     PyPI:   https://pypi.org/project/digipinpy
 """
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
@@ -48,6 +48,13 @@ from .decoder import (
     batch_decode,
     get_parent,
     is_within,
+)
+from .neighbors import (
+    get_neighbors,
+    get_ring,
+    get_disk,
+    get_surrounding_cells,
+    expand_search_area,
 )
 from .utils import (
     is_valid_digipin as is_valid,
@@ -75,12 +82,19 @@ __all__ = [
     "batch_encode",
     "batch_decode",
 
-    # Additional functions
+    # Hierarchical operations
     "get_bounds",
     "encode_with_bounds",
     "decode_with_bounds",
     "get_parent",
     "is_within",
+
+    # Neighbor discovery (NEW in v1.1.0)
+    "get_neighbors",
+    "get_ring",
+    "get_disk",
+    "get_surrounding_cells",
+    "expand_search_area",
 
     # Utilities
     "is_valid_coordinate",

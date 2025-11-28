@@ -238,24 +238,29 @@ def get_approx_distance(level: int) -> float:
 # CODE VALIDATION
 # ============================================================================
 
-def is_valid_digipin(code: str) -> bool:
+def is_valid_digipin(code: str, strict: bool = False) -> bool:
     """
     Validate DIGIPIN code format.
 
     Checks:
-    - Length is exactly 10 characters
+    - Length is between 1 and 10 characters (or exactly 10 if strict=True)
     - All characters are from official alphabet
 
     Args:
         code: DIGIPIN code to validate
+        strict: If True, requires exactly 10 characters (default: False)
 
     Returns:
         True if valid format
 
     Example:
-        >>> is_valid_digipin("39J49LL8T4")  # Dak Bhawan
+        >>> is_valid_digipin("39J49LL8T4")  # Full precision (10 chars)
         True
-        >>> is_valid_digipin("123")  # Too short
+        >>> is_valid_digipin("39J4")  # Partial precision (4 chars)
+        True
+        >>> is_valid_digipin("39J4", strict=True)  # Too short in strict mode
+        False
+        >>> is_valid_digipin("123")  # Invalid - length must be 1-10
         False
         >>> is_valid_digipin("ABCDEFGHIJ")  # Invalid symbols
         False
@@ -263,21 +268,28 @@ def is_valid_digipin(code: str) -> bool:
     if not isinstance(code, str):
         return False
 
-    # Must be exactly 10 characters
-    if len(code) != DIGIPIN_LEVELS:
-        return False
+    # Length validation
+    if strict:
+        # Strict mode: exactly 10 characters
+        if len(code) != DIGIPIN_LEVELS:
+            return False
+    else:
+        # Flexible mode: 1 to 10 characters
+        if not (1 <= len(code) <= DIGIPIN_LEVELS):
+            return False
 
     # All characters must be in official alphabet
     code_upper = code.upper()
     return all(char in DIGIPIN_ALPHABET for char in code_upper)
 
 
-def validate_digipin(code: str) -> str:
+def validate_digipin(code: str, strict: bool = False) -> str:
     """
     Validate and normalize DIGIPIN code.
 
     Args:
         code: DIGIPIN code to validate
+        strict: If True, requires exactly 10 characters (default: False)
 
     Returns:
         Normalized code (uppercase)
@@ -286,19 +298,31 @@ def validate_digipin(code: str) -> str:
         ValueError: If code is invalid
 
     Example:
-        >>> validate_digipin("39j49ll8t4")  # Lowercase
+        >>> validate_digipin("39j49ll8t4")  # Lowercase full code
         '39J49LL8T4'
-        >>> validate_digipin("123")  # Invalid
+        >>> validate_digipin("39j4")  # Lowercase partial code
+        '39J4'
+        >>> validate_digipin("39J4", strict=True)  # Invalid - too short in strict mode
+        ValueError: Invalid DIGIPIN length...
+        >>> validate_digipin("123")  # Invalid - wrong length
         ValueError: Invalid DIGIPIN length...
     """
     if not isinstance(code, str):
         raise ValueError("DIGIPIN code must be a string")
 
-    if len(code) != DIGIPIN_LEVELS:
-        raise ValueError(
-            f"Invalid DIGIPIN length. Expected {DIGIPIN_LEVELS} characters, "
-            f"got {len(code)}"
-        )
+    # Length validation
+    if strict:
+        if len(code) != DIGIPIN_LEVELS:
+            raise ValueError(
+                f"Invalid DIGIPIN length. Expected exactly {DIGIPIN_LEVELS} characters, "
+                f"got {len(code)}"
+            )
+    else:
+        if not (1 <= len(code) <= DIGIPIN_LEVELS):
+            raise ValueError(
+                f"Invalid DIGIPIN length. Expected 1-{DIGIPIN_LEVELS} characters, "
+                f"got {len(code)}"
+            )
 
     code_upper = code.upper()
 
