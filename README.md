@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/pypi/l/digipinpy.svg)](https://github.com/DEADSERPENT/digipinpy/blob/main/LICENSE)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](https://github.com/DEADSERPENT/digipinpy/actions)
 
+
 **A high-precision national geocoding system for India — encode and decode DIGIPIN codes with ~3.8m accuracy.**
 
 
