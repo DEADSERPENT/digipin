@@ -132,3 +132,33 @@ dmypy.json
 # OS
 .DS_Store
 Thumbs.db
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Ruff
+.ruff_cache/
+
+# PDM
+.pdm.toml
+.pdm-python
+
+# Poetry
+poetry.lock
+
+# Development
+*.bak
+.scratch/
+
+# Documentation builds
+docs/_build/
+docs/.doctrees/
+site/
+
+# Temporary files
+*.tmp
+.temp/
