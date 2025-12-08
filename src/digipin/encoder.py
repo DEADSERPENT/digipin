@@ -155,9 +155,4 @@ def encode_with_bounds(lat: float, lon: float, **kwargs) -> dict:
     code = encode(lat, lon, **kwargs)
     bounds = get_bounds(code)
 
-    return {
-        'code': code,
-        'lat': lat,
-        'lon': lon,
-        'bounds': bounds
-    }
+    return {"code": code, "lat": lat, "lon": lon, "bounds": bounds}

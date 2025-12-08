@@ -42,9 +42,18 @@ Pandas Integration (Optional):
 
     This enables DataFrame operations:
         df['code'] = df.digipin.encode('lat', 'lon')
+
+Django Integration (Optional):
+    For web applications, install with Django support:
+        pip install digipinpy[django]
+
+    Then use DigipinField in your models:
+        from digipin.django_ext import DigipinField
+        class MyModel(models.Model):
+            code = DigipinField()
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
@@ -87,31 +96,26 @@ __all__ = [
     "encode",
     "decode",
     "is_valid",
-
     # Batch operations
     "batch_encode",
     "batch_decode",
-
     # Hierarchical operations
     "get_bounds",
     "encode_with_bounds",
     "decode_with_bounds",
     "get_parent",
     "is_within",
-
     # Neighbor discovery (NEW in v1.1.0)
     "get_neighbors",
     "get_ring",
     "get_disk",
     "get_surrounding_cells",
     "expand_search_area",
-
     # Utilities
     "is_valid_coordinate",
     "get_precision_info",
     "get_grid_size",
     "get_approx_distance",
-
     # Constants
     "LAT_MIN",
     "LAT_MAX",
@@ -119,7 +123,6 @@ __all__ = [
     "LON_MAX",
     "DIGIPIN_ALPHABET",
     "DIGIPIN_LEVELS",
-
     # Metadata
     "__version__",
     "__author__",

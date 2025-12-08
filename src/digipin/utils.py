@@ -16,7 +16,7 @@ from typing import Tuple
 
 # Official bounding box (Department of Posts specification)
 # Covers entire India including maritime Exclusive Economic Zone (EEZ)
-LAT_MIN = 2.5   # Southernmost point (degrees North)
+LAT_MIN = 2.5  # Southernmost point (degrees North)
 LAT_MAX = 38.5  # Northernmost point (degrees North)
 LON_MIN = 63.5  # Westernmost point (degrees East)
 LON_MAX = 99.5  # Easternmost point (degrees East)
@@ -48,10 +48,10 @@ assert len(DIGIPIN_ALPHABET) == 16, "Alphabet must have exactly 16 symbols"
 # Adjacent numbers (2→3→4→5...) are geographic neighbors!
 
 SPIRAL_GRID = [
-    ['F', 'C', '9', '8'],  # Row 0 (from official implementation)
-    ['J', '3', '2', '7'],  # Row 1
-    ['K', '4', '5', '6'],  # Row 2
-    ['L', 'M', 'P', 'T']   # Row 3
+    ["F", "C", "9", "8"],  # Row 0 (from official implementation)
+    ["J", "3", "2", "7"],  # Row 1
+    ["K", "4", "5", "6"],  # Row 2
+    ["L", "M", "P", "T"],  # Row 3
 ]
 
 # Create reverse lookup: symbol → (row, col)
@@ -70,6 +70,7 @@ GRID_SUBDIVISION = 4
 # ============================================================================
 # COORDINATE VALIDATION
 # ============================================================================
+
 
 def is_valid_coordinate(lat: float, lon: float) -> bool:
     """
@@ -118,6 +119,7 @@ def validate_coordinate(lat: float, lon: float) -> None:
 # ============================================================================
 # SPIRAL GRID MAPPING
 # ============================================================================
+
 
 def get_symbol_from_position(row: int, col: int) -> str:
     """
@@ -176,6 +178,7 @@ def get_position_from_symbol(symbol: str) -> Tuple[int, int]:
 # GRID SIZE CALCULATIONS
 # ============================================================================
 
+
 def get_grid_size(level: int) -> Tuple[float, float]:
     """
     Calculate grid cell size at a given level.
@@ -198,7 +201,7 @@ def get_grid_size(level: int) -> Tuple[float, float]:
         raise ValueError(f"Level must be between 1 and {DIGIPIN_LEVELS}")
 
     # At each level, divide by 4 (4x4 subdivision)
-    divisions = GRID_SUBDIVISION ** level
+    divisions = GRID_SUBDIVISION**level
 
     lat_cell_size = LAT_SPAN / divisions
     lon_cell_size = LON_SPAN / divisions
@@ -237,6 +240,7 @@ def get_approx_distance(level: int) -> float:
 # ============================================================================
 # CODE VALIDATION
 # ============================================================================
+
 
 def is_valid_digipin(code: str, strict: bool = False) -> bool:
     """
@@ -341,6 +345,7 @@ def validate_digipin(code: str, strict: bool = False) -> str:
 # PRECISION INFORMATION
 # ============================================================================
 
+
 def get_precision_info(level: int = 10) -> dict:
     """
     Get detailed precision information for a given level.
@@ -362,13 +367,13 @@ def get_precision_info(level: int = 10) -> dict:
     distance_m = get_approx_distance(level)
 
     return {
-        'level': level,
-        'code_length': level,
-        'grid_size_lat_deg': lat_deg,
-        'grid_size_lon_deg': lon_deg,
-        'approx_distance_m': distance_m,
-        'total_cells': (GRID_SUBDIVISION ** level) ** 2,
-        'description': _get_level_description(level)
+        "level": level,
+        "code_length": level,
+        "grid_size_lat_deg": lat_deg,
+        "grid_size_lon_deg": lon_deg,
+        "approx_distance_m": distance_m,
+        "total_cells": (GRID_SUBDIVISION**level) ** 2,
+        "description": _get_level_description(level),
     }
 
 
@@ -384,6 +389,6 @@ def _get_level_description(level: int) -> str:
         7: "Block level (~250 m)",
         8: "Building level (~60 m)",
         9: "Property level (~15 m)",
-        10: "Precise location (~3.8 m)"
+        10: "Precise location (~3.8 m)",
     }
     return descriptions.get(level, f"Level {level}")

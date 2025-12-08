@@ -9,11 +9,12 @@ import argparse
 from typing import Optional
 
 # Fix Windows console encoding for unicode characters
-if sys.platform == 'win32':
+if sys.platform == "win32":
     try:
         import io
-        if hasattr(sys.stdout, 'buffer'):
-            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+        if hasattr(sys.stdout, "buffer"):
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
     except:
         pass  # Fallback to ASCII-safe characters if encoding fix fails
 
@@ -30,19 +31,16 @@ from . import (
 def cmd_encode(args):
     """Handle the encode command."""
     try:
-        code = encode(
-            args.latitude,
-            args.longitude,
-            precision=args.precision
-        )
+        code = encode(args.latitude, args.longitude, precision=args.precision)
 
-        if args.format == 'json':
+        if args.format == "json":
             import json
+
             output = {
-                'code': code,
-                'latitude': args.latitude,
-                'longitude': args.longitude,
-                'precision': args.precision
+                "code": code,
+                "latitude": args.latitude,
+                "longitude": args.longitude,
+                "precision": args.precision,
             }
             print(json.dumps(output, indent=2))
         else:
@@ -60,20 +58,21 @@ def cmd_decode(args):
         # Decode expects full 10-char code or partial code
         code = args.code
         if args.precision < 10:
-            code = args.code[:args.precision]
+            code = args.code[: args.precision]
 
         lat, lon = decode(code)
 
-        if args.format == 'json':
+        if args.format == "json":
             import json
-            output = {'latitude': lat, 'longitude': lon}
+
+            output = {"latitude": lat, "longitude": lon}
             if args.bbox:
                 min_lat, max_lat, min_lon, max_lon = get_bounds(code)
-                output['bbox'] = {
-                    'min_lat': min_lat,
-                    'max_lat': max_lat,
-                    'min_lon': min_lon,
-                    'max_lon': max_lon,
+                output["bbox"] = {
+                    "min_lat": min_lat,
+                    "max_lat": max_lat,
+                    "min_lon": min_lon,
+                    "max_lon": max_lon,
                 }
             print(json.dumps(output, indent=2))
         else:
@@ -96,24 +95,19 @@ def cmd_validate(args):
     """Handle the validate command."""
     valid = is_valid(args.code)
 
-    if args.format == 'json':
+    if args.format == "json":
         import json
-        output = {
-            'code': args.code,
-            'valid': valid
-        }
+
+        output = {"code": args.code, "valid": valid}
         if valid and args.detailed:
             try:
                 lat, lon = decode(args.code)
-                output['latitude'] = lat
-                output['longitude'] = lon
+                output["latitude"] = lat
+                output["longitude"] = lon
             except:
                 pass
         elif not valid and args.detailed:
-            output['expected_format'] = {
-                'length': 10,
-                'symbols': '23456789CFJKLMPT'
-            }
+            output["expected_format"] = {"length": 10, "symbols": "23456789CFJKLMPT"}
         print(json.dumps(output, indent=2))
     elif args.detailed:
         if valid:
@@ -154,8 +148,8 @@ def cmd_info(args):
 def main(argv: Optional[list] = None):
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        prog='digipin',
-        description='DIGIPIN: Open geocoding system for India',
+        prog="digipin",
+        description="DIGIPIN: Open geocoding system for India",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -165,114 +159,94 @@ Examples:
   digipin info
 
 For more information, visit: https://github.com/DEADSERPENT/digipinpy
-        """
+        """,
     )
 
     parser.add_argument(
-        '--version',
-        action='version',
-        version=f'%(prog)s {__version__}'
+        "--version", action="version", version=f"%(prog)s {__version__}"
     )
 
-    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # Encode command
     encode_parser = subparsers.add_parser(
-        'encode',
-        help='Encode latitude/longitude to DIGIPIN code'
+        "encode", help="Encode latitude/longitude to DIGIPIN code"
     )
+    encode_parser.add_argument("latitude", type=float, help="Latitude (2.5 to 38.5)")
+    encode_parser.add_argument("longitude", type=float, help="Longitude (63.5 to 99.5)")
     encode_parser.add_argument(
-        'latitude',
-        type=float,
-        help='Latitude (2.5 to 38.5)'
-    )
-    encode_parser.add_argument(
-        'longitude',
-        type=float,
-        help='Longitude (63.5 to 99.5)'
-    )
-    encode_parser.add_argument(
-        '-p', '--precision',
+        "-p",
+        "--precision",
         type=int,
         default=10,
-        help='Code length (1-10, default: 10)'
+        help="Code length (1-10, default: 10)",
     )
     encode_parser.add_argument(
-        '-f', '--format',
-        choices=['text', 'json'],
-        default='text',
-        help='Output format (default: text)'
+        "-f",
+        "--format",
+        choices=["text", "json"],
+        default="text",
+        help="Output format (default: text)",
     )
     encode_parser.set_defaults(func=cmd_encode)
 
     # Decode command
     decode_parser = subparsers.add_parser(
-        'decode',
-        help='Decode DIGIPIN code to latitude/longitude'
+        "decode", help="Decode DIGIPIN code to latitude/longitude"
     )
+    decode_parser.add_argument("code", type=str, help="DIGIPIN code to decode")
     decode_parser.add_argument(
-        'code',
-        type=str,
-        help='DIGIPIN code to decode'
-    )
-    decode_parser.add_argument(
-        '-p', '--precision',
+        "-p",
+        "--precision",
         type=int,
         default=10,
-        help='Code length (1-10, default: 10)'
+        help="Code length (1-10, default: 10)",
     )
     decode_parser.add_argument(
-        '-b', '--bbox',
-        action='store_true',
-        help='Include bounding box in output'
+        "-b", "--bbox", action="store_true", help="Include bounding box in output"
     )
     decode_parser.add_argument(
-        '-f', '--format',
-        choices=['text', 'json'],
-        default='text',
-        help='Output format (default: text)'
+        "-f",
+        "--format",
+        choices=["text", "json"],
+        default="text",
+        help="Output format (default: text)",
     )
     decode_parser.set_defaults(func=cmd_decode)
 
     # Validate command
-    validate_parser = subparsers.add_parser(
-        'validate',
-        help='Validate a DIGIPIN code'
-    )
+    validate_parser = subparsers.add_parser("validate", help="Validate a DIGIPIN code")
+    validate_parser.add_argument("code", type=str, help="DIGIPIN code to validate")
     validate_parser.add_argument(
-        'code',
-        type=str,
-        help='DIGIPIN code to validate'
-    )
-    validate_parser.add_argument(
-        '-p', '--precision',
+        "-p",
+        "--precision",
         type=int,
         default=10,
-        help='Code length (1-10, default: 10)'
+        help="Code length (1-10, default: 10)",
     )
     validate_parser.add_argument(
-        '-d', '--detailed',
-        action='store_true',
-        help='Show detailed validation information'
+        "-d",
+        "--detailed",
+        action="store_true",
+        help="Show detailed validation information",
     )
     validate_parser.add_argument(
-        '-f', '--format',
-        choices=['text', 'json'],
-        default='text',
-        help='Output format (default: text)'
+        "-f",
+        "--format",
+        choices=["text", "json"],
+        default="text",
+        help="Output format (default: text)",
     )
     validate_parser.set_defaults(func=cmd_validate)
 
     # Info command
-    info_parser = subparsers.add_parser(
-        'info',
-        help='Show precision information'
-    )
+    info_parser = subparsers.add_parser("info", help="Show precision information")
     info_parser.add_argument(
-        '-p', '--precision',
+        "-p",
+        "--precision",
         type=int,
         default=10,
-        help='Code length (1-10, default: 10)'
+        help="Code length (1-10, default: 10)",
     )
     info_parser.set_defaults(func=cmd_info)
 
@@ -288,5 +262,5 @@ For more information, visit: https://github.com/DEADSERPENT/digipinpy
     return args.func(args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

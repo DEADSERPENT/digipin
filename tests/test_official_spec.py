@@ -49,7 +49,7 @@ class TestOfficialSpecification:
         # Should be very close (within grid cell ~3.8m)
         lat_error = abs(decoded_lat - lat) * 111000  # degrees to meters
         lon_error = abs(decoded_lon - lon) * 111000
-        total_error = (lat_error**2 + lon_error**2)**0.5
+        total_error = (lat_error**2 + lon_error**2) ** 0.5
 
         assert total_error < 5.0, (
             f"Decode error too large: {total_error:.2f}m\n"
@@ -78,19 +78,19 @@ class TestOfficialSpecification:
             assert len(code) == 10, f"{city_name}: Code must be 10 chars"
 
             # Must use only official alphabet
-            assert all(c in utils.DIGIPIN_ALPHABET for c in code), (
-                f"{city_name}: Code contains invalid characters: {code}"
-            )
+            assert all(
+                c in utils.DIGIPIN_ALPHABET for c in code
+            ), f"{city_name}: Code contains invalid characters: {code}"
 
             # Round-trip test
             decoded_lat, decoded_lon = decoder.decode(code)
             lat_error = abs(decoded_lat - lat) * 111000
             lon_error = abs(decoded_lon - lon) * 111000
-            total_error = (lat_error**2 + lon_error**2)**0.5
+            total_error = (lat_error**2 + lon_error**2) ** 0.5
 
-            assert total_error < 5.0, (
-                f"{city_name}: Round-trip error {total_error:.2f}m too large"
-            )
+            assert (
+                total_error < 5.0
+            ), f"{city_name}: Round-trip error {total_error:.2f}m too large"
 
 
 class TestEncodeDecode:
@@ -100,15 +100,15 @@ class TestEncodeDecode:
         """Test that encode->decode returns approximately same coordinates."""
         test_cases = [
             (28.622788, 77.213033),  # Dak Bhawan
-            (12.9716, 77.5946),      # Bengaluru
-            (19.0760, 72.8777),      # Mumbai
-            (22.5726, 88.3639),      # Kolkata
-            (13.0827, 80.2707),      # Chennai
-            (28.7041, 77.1025),      # Delhi
-            (17.3850, 78.4867),      # Hyderabad
-            (23.0225, 72.5714),      # Ahmedabad
-            (26.9124, 75.7873),      # Jaipur
-            (11.0168, 76.9558),      # Coimbatore
+            (12.9716, 77.5946),  # Bengaluru
+            (19.0760, 72.8777),  # Mumbai
+            (22.5726, 88.3639),  # Kolkata
+            (13.0827, 80.2707),  # Chennai
+            (28.7041, 77.1025),  # Delhi
+            (17.3850, 78.4867),  # Hyderabad
+            (23.0225, 72.5714),  # Ahmedabad
+            (26.9124, 75.7873),  # Jaipur
+            (11.0168, 76.9558),  # Coimbatore
         ]
 
         for original_lat, original_lon in test_cases:
@@ -119,9 +119,9 @@ class TestEncodeDecode:
             assert len(code) == 10, f"Code must be 10 chars, got {len(code)}"
 
             # Must use only official alphabet
-            assert all(c in utils.DIGIPIN_ALPHABET for c in code), (
-                f"Code contains invalid characters: {code}"
-            )
+            assert all(
+                c in utils.DIGIPIN_ALPHABET for c in code
+            ), f"Code contains invalid characters: {code}"
 
             # Decode
             decoded_lat, decoded_lon = decoder.decode(code)
@@ -129,7 +129,7 @@ class TestEncodeDecode:
             # Calculate error in meters
             lat_error = abs(decoded_lat - original_lat) * 111000
             lon_error = abs(decoded_lon - original_lon) * 111000
-            total_error = (lat_error**2 + lon_error**2)**0.5
+            total_error = (lat_error**2 + lon_error**2) ** 0.5
 
             # Must be within ~5m (grid cell is ~3.8m)
             assert total_error < 5.0, (
@@ -147,9 +147,9 @@ class TestEncodeDecode:
             code = encoder.encode(lat, lon, precision=precision)
 
             # Check length
-            assert len(code) == precision, (
-                f"Code length {len(code)} != precision {precision}"
-            )
+            assert (
+                len(code) == precision
+            ), f"Code length {len(code)} != precision {precision}"
 
             # Check valid characters
             assert all(c in utils.DIGIPIN_ALPHABET for c in code)
@@ -177,7 +177,7 @@ class TestEncodeDecode:
             decoded_lat, decoded_lon = decoded[i]
             lat_error = abs(decoded_lat - original_lat) * 111000
             lon_error = abs(decoded_lon - original_lon) * 111000
-            total_error = (lat_error**2 + lon_error**2)**0.5
+            total_error = (lat_error**2 + lon_error**2) ** 0.5
             assert total_error < 5.0
 
 
@@ -222,30 +222,30 @@ class TestBounds:
         code = "39J49LL8T4"
         result = decoder.decode_with_bounds(code)
 
-        assert 'code' in result
-        assert 'lat' in result
-        assert 'lon' in result
-        assert 'bounds' in result
+        assert "code" in result
+        assert "lat" in result
+        assert "lon" in result
+        assert "bounds" in result
 
-        assert result['code'] == code.upper()
-        assert isinstance(result['lat'], float)
-        assert isinstance(result['lon'], float)
-        assert isinstance(result['bounds'], tuple)
-        assert len(result['bounds']) == 4
+        assert result["code"] == code.upper()
+        assert isinstance(result["lat"], float)
+        assert isinstance(result["lon"], float)
+        assert isinstance(result["bounds"], tuple)
+        assert len(result["bounds"]) == 4
 
     def test_encode_with_bounds(self):
         """Test encode_with_bounds returns correct structure."""
         lat, lon = 28.622788, 77.213033
         result = encoder.encode_with_bounds(lat, lon)
 
-        assert 'code' in result
-        assert 'lat' in result
-        assert 'lon' in result
-        assert 'bounds' in result
+        assert "code" in result
+        assert "lat" in result
+        assert "lon" in result
+        assert "bounds" in result
 
-        assert result['code'] == "39J49LL8T4"
-        assert result['lat'] == lat
-        assert result['lon'] == lon
+        assert result["code"] == "39J49LL8T4"
+        assert result["lat"] == lat
+        assert result["lon"] == lon
 
 
 class TestValidation:
@@ -366,10 +366,10 @@ class TestSpiralGrid:
         """Test that grid matches official specification."""
         # Official grid from JavaScript implementation
         expected_grid = [
-            ['F', 'C', '9', '8'],
-            ['J', '3', '2', '7'],
-            ['K', '4', '5', '6'],
-            ['L', 'M', 'P', 'T']
+            ["F", "C", "9", "8"],
+            ["J", "3", "2", "7"],
+            ["K", "4", "5", "6"],
+            ["L", "M", "P", "T"],
         ]
 
         assert utils.SPIRAL_GRID == expected_grid
@@ -426,7 +426,7 @@ class TestBoundaryConditions:
         decoded_lat, decoded_lon = decoder.decode(code)
         lat_error = abs(decoded_lat - center_lat) * 111000
         lon_error = abs(decoded_lon - center_lon) * 111000
-        total_error = (lat_error**2 + lon_error**2)**0.5
+        total_error = (lat_error**2 + lon_error**2) ** 0.5
 
         assert total_error < 5.0
 
@@ -464,13 +464,13 @@ class TestGridSizeCalculations:
         for level in range(1, 11):
             info = utils.get_precision_info(level)
 
-            assert info['level'] == level
-            assert info['code_length'] == level
-            assert 'grid_size_lat_deg' in info
-            assert 'grid_size_lon_deg' in info
-            assert 'approx_distance_m' in info
-            assert 'total_cells' in info
-            assert 'description' in info
+            assert info["level"] == level
+            assert info["code_length"] == level
+            assert "grid_size_lat_deg" in info
+            assert "grid_size_lon_deg" in info
+            assert "approx_distance_m" in info
+            assert "total_cells" in info
+            assert "description" in info
 
 
 class TestConstants:

@@ -33,14 +33,10 @@ Our approach: Decode → offset → encode (automatic!)
 from typing import List, Set
 from .decoder import decode
 from .encoder import encode
-from .utils import (
-    get_grid_size,
-    is_valid_coordinate,
-    is_valid_digipin
-)
+from .utils import get_grid_size, is_valid_coordinate, is_valid_digipin
 
 
-def get_neighbors(code: str, direction: str = 'all') -> List[str]:
+def get_neighbors(code: str, direction: str = "all") -> List[str]:
     """
     Get immediate neighboring grid cells for a DIGIPIN code.
 
@@ -110,27 +106,25 @@ def get_neighbors(code: str, direction: str = 'all') -> List[str]:
     # Format: (latitude_multiplier, longitude_multiplier)
     # Remember: Latitude increases northward, Longitude increases eastward
     offsets = {
-        'north':     ( 1,  0),   # Move up
-        'northeast': ( 1,  1),   # Move up and right
-        'east':      ( 0,  1),   # Move right
-        'southeast': (-1,  1),   # Move down and right
-        'south':     (-1,  0),   # Move down
-        'southwest': (-1, -1),   # Move down and left
-        'west':      ( 0, -1),   # Move left
-        'northwest': ( 1, -1),   # Move up and left
+        "north": (1, 0),  # Move up
+        "northeast": (1, 1),  # Move up and right
+        "east": (0, 1),  # Move right
+        "southeast": (-1, 1),  # Move down and right
+        "south": (-1, 0),  # Move down
+        "southwest": (-1, -1),  # Move down and left
+        "west": (0, -1),  # Move left
+        "northwest": (1, -1),  # Move up and left
     }
 
     # Filter offsets based on requested direction
-    if direction == 'all':
+    if direction == "all":
         selected_offsets = offsets
-    elif direction == 'cardinal':
-        selected_offsets = {
-            k: offsets[k] for k in ['north', 'south', 'east', 'west']
-        }
+    elif direction == "cardinal":
+        selected_offsets = {k: offsets[k] for k in ["north", "south", "east", "west"]}
     elif direction in offsets:
         selected_offsets = {direction: offsets[direction]}
     else:
-        valid_options = list(offsets.keys()) + ['all', 'cardinal']
+        valid_options = list(offsets.keys()) + ["all", "cardinal"]
         raise ValueError(
             f"Invalid direction '{direction}'. "
             f"Must be one of: {', '.join(valid_options)}"
@@ -336,7 +330,7 @@ def get_surrounding_cells(code: str) -> List[str]:
     Alias for get_neighbors(code, direction='all').
     Returns all 8 immediate neighbors.
     """
-    return get_neighbors(code, direction='all')
+    return get_neighbors(code, direction="all")
 
 
 def expand_search_area(code: str, radius: int = 1) -> List[str]:

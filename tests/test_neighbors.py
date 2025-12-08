@@ -31,8 +31,8 @@ class TestBasicNeighborDiscovery:
     def test_get_all_neighbors_returns_8_for_interior_cell(self):
         """Interior cells should have exactly 8 neighbors."""
         # Use a code in the middle of India (not near edges)
-        code = '39J49LL8T4'  # Dak Bhawan, New Delhi
-        neighbors = get_neighbors(code, direction='all')
+        code = "39J49LL8T4"  # Dak Bhawan, New Delhi
+        neighbors = get_neighbors(code, direction="all")
 
         # Should have 8 neighbors (not at boundary)
         assert len(neighbors) == 8
@@ -46,8 +46,8 @@ class TestBasicNeighborDiscovery:
 
     def test_get_cardinal_neighbors_returns_4(self):
         """Cardinal direction should return only N, S, E, W."""
-        code = '39J49LL8T4'
-        neighbors = get_neighbors(code, direction='cardinal')
+        code = "39J49LL8T4"
+        neighbors = get_neighbors(code, direction="cardinal")
 
         # Should have exactly 4 neighbors
         assert len(neighbors) == 4
@@ -58,11 +58,19 @@ class TestBasicNeighborDiscovery:
 
     def test_get_specific_direction_neighbor(self):
         """Should be able to get neighbor in specific direction."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         # Test each direction individually
-        directions = ['north', 'south', 'east', 'west',
-                      'northeast', 'northwest', 'southeast', 'southwest']
+        directions = [
+            "north",
+            "south",
+            "east",
+            "west",
+            "northeast",
+            "northwest",
+            "southeast",
+            "southwest",
+        ]
 
         for direction in directions:
             neighbors = get_neighbors(code, direction=direction)
@@ -76,7 +84,7 @@ class TestBasicNeighborDiscovery:
 
     def test_neighbors_are_actually_adjacent(self):
         """Verify neighbors are geometrically adjacent."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
         center_lat, center_lon = decode(code)
 
         neighbors = get_neighbors(code)
@@ -102,8 +110,9 @@ class TestBasicNeighborDiscovery:
             neighbors = get_neighbors(code)
 
             for neighbor in neighbors:
-                assert len(neighbor) == precision, \
-                    f"Neighbor {neighbor} has wrong precision (expected {precision})"
+                assert (
+                    len(neighbor) == precision
+                ), f"Neighbor {neighbor} has wrong precision (expected {precision})"
 
 
 class TestBoundaryCrossing:
@@ -113,10 +122,10 @@ class TestBoundaryCrossing:
         """Moving across parent boundary should change parent code."""
         # Find a cell near the edge of its parent grid
         # We'll use a code ending in 'T' (southeast corner of parent)
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         # Get eastern neighbor (should cross into next parent grid)
-        east_neighbors = get_neighbors(code, direction='east')
+        east_neighbors = get_neighbors(code, direction="east")
 
         if east_neighbors:
             east = east_neighbors[0]
@@ -132,18 +141,19 @@ class TestBoundaryCrossing:
         # These codes end in corner symbols: F, 8, T, L
 
         corner_codes = [
-            '39J49LL8TF',  # Northwest corner
-            '39J49LL8T8',  # Northeast corner
-            '39J49LL8TT',  # Southeast corner
-            '39J49LL8TL',  # Southwest corner
+            "39J49LL8TF",  # Northwest corner
+            "39J49LL8T8",  # Northeast corner
+            "39J49LL8TT",  # Southeast corner
+            "39J49LL8TL",  # Southwest corner
         ]
 
         for code in corner_codes:
             neighbors = get_neighbors(code)
 
             # Should still have neighbors (maybe fewer if at bounding box edge)
-            assert len(neighbors) >= 3, \
-                f"Corner code {code} should have at least 3 neighbors"
+            assert (
+                len(neighbors) >= 3
+            ), f"Corner code {code} should have at least 3 neighbors"
 
             # All should be valid
             for n in neighbors:
@@ -189,20 +199,20 @@ class TestEdgeCases:
     def test_invalid_code_raises_error(self):
         """Invalid codes should raise ValueError."""
         with pytest.raises(ValueError):
-            get_neighbors('INVALID123')
+            get_neighbors("INVALID123")
 
         with pytest.raises(ValueError):
-            get_neighbors('000XXXXXXX')  # Invalid characters
+            get_neighbors("000XXXXXXX")  # Invalid characters
 
     def test_invalid_direction_raises_error(self):
         """Invalid direction should raise ValueError."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         with pytest.raises(ValueError):
-            get_neighbors(code, direction='invalid')
+            get_neighbors(code, direction="invalid")
 
         with pytest.raises(ValueError):
-            get_neighbors(code, direction='up')  # Not a valid direction
+            get_neighbors(code, direction="up")  # Not a valid direction
 
 
 class TestRingFunction:
@@ -210,17 +220,17 @@ class TestRingFunction:
 
     def test_ring_radius_1_equals_all_neighbors(self):
         """Ring at radius 1 should equal all 8 neighbors."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         ring_1 = set(get_ring(code, radius=1))
-        all_neighbors = set(get_neighbors(code, direction='all'))
+        all_neighbors = set(get_neighbors(code, direction="all"))
 
         # Should be identical
         assert ring_1 == all_neighbors
 
     def test_ring_radius_2_forms_hollow_square(self):
         """Ring at radius 2 should form a hollow square."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
         ring = get_ring(code, radius=2)
 
         # Maximum cells in a ring at radius 2: 16
@@ -237,12 +247,13 @@ class TestRingFunction:
         # Immediate neighbors (radius 1) should not be in ring
         neighbors_r1 = get_neighbors(code)
         for n in neighbors_r1:
-            assert n not in ring, \
-                f"Radius 1 neighbor {n} should not be in radius 2 ring"
+            assert (
+                n not in ring
+            ), f"Radius 1 neighbor {n} should not be in radius 2 ring"
 
     def test_ring_invalid_radius_raises_error(self):
         """Ring with radius < 1 should raise error."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         with pytest.raises(ValueError):
             get_ring(code, radius=0)
@@ -256,7 +267,7 @@ class TestDiskFunction:
 
     def test_disk_radius_0_returns_only_center(self):
         """Disk with radius 0 should return only center cell."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
         disk = get_disk(code, radius=0)
 
         assert len(disk) == 1
@@ -264,7 +275,7 @@ class TestDiskFunction:
 
     def test_disk_radius_1_returns_3x3_grid(self):
         """Disk with radius 1 should return 3×3 grid (9 cells)."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
         disk = get_disk(code, radius=1)
 
         # Should have 9 cells (3×3 grid) if not at boundary
@@ -280,7 +291,7 @@ class TestDiskFunction:
 
     def test_disk_radius_2_returns_5x5_grid(self):
         """Disk with radius 2 should return 5×5 grid (25 cells)."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
         disk = get_disk(code, radius=2)
 
         # Should have up to 25 cells (5×5 grid)
@@ -296,7 +307,7 @@ class TestDiskFunction:
 
     def test_disk_progressive_expansion(self):
         """Each larger radius should include all cells from smaller radius."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         disk_0 = set(get_disk(code, radius=0))
         disk_1 = set(get_disk(code, radius=1))
@@ -308,7 +319,7 @@ class TestDiskFunction:
 
     def test_disk_invalid_radius_raises_error(self):
         """Disk with radius < 0 should raise error."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         with pytest.raises(ValueError):
             get_disk(code, radius=-1)
@@ -319,16 +330,16 @@ class TestConvenienceAliases:
 
     def test_get_surrounding_cells_alias(self):
         """get_surrounding_cells should work like get_neighbors(all)."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         surrounding = set(get_surrounding_cells(code))
-        neighbors = set(get_neighbors(code, direction='all'))
+        neighbors = set(get_neighbors(code, direction="all"))
 
         assert surrounding == neighbors
 
     def test_expand_search_area_alias(self):
         """expand_search_area should work like get_disk."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         for radius in [0, 1, 2, 5]:
             expanded = set(expand_search_area(code, radius=radius))
@@ -401,7 +412,7 @@ class TestPerformance:
         """Neighbor discovery should complete in reasonable time."""
         import time
 
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         start = time.time()
         for _ in range(100):
@@ -415,7 +426,7 @@ class TestPerformance:
         """Disk calculation should scale reasonably with radius."""
         import time
 
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
 
         # Test increasing radii
         for radius in [1, 5, 10]:
@@ -424,8 +435,7 @@ class TestPerformance:
             elapsed = time.time() - start
 
             # Even radius=10 should complete quickly
-            assert elapsed < 0.5, \
-                f"Radius {radius} too slow: {elapsed:.3f}s"
+            assert elapsed < 0.5, f"Radius {radius} too slow: {elapsed:.3f}s"
 
             # Verify we got expected number of cells (approximately)
             expected_max = (2 * radius + 1) ** 2
@@ -437,12 +447,13 @@ class TestSpecificationCompliance:
 
     def test_neighbors_maintain_grid_properties(self):
         """Neighbors should maintain DIGIPIN grid properties."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
         neighbors = get_neighbors(code)
 
         for neighbor in neighbors:
             # Should use valid DIGIPIN alphabet
             from digipin import DIGIPIN_ALPHABET
+
             for char in neighbor:
                 assert char in DIGIPIN_ALPHABET
 
@@ -451,7 +462,7 @@ class TestSpecificationCompliance:
 
     def test_geographic_coordinate_consistency(self):
         """Decoded neighbor coordinates should be geographically consistent."""
-        code = '39J49LL8T4'
+        code = "39J49LL8T4"
         center_lat, center_lon = decode(code)
 
         neighbors = get_neighbors(code)
@@ -461,6 +472,7 @@ class TestSpecificationCompliance:
 
             # Should be within India's bounding box
             from digipin import LAT_MIN, LAT_MAX, LON_MIN, LON_MAX
+
             assert LAT_MIN <= n_lat <= LAT_MAX
             assert LON_MIN <= n_lon <= LON_MAX
 
@@ -473,5 +485,5 @@ class TestSpecificationCompliance:
             assert lon_diff_km < 1, "Neighbor too far in longitude"
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

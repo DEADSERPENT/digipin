@@ -163,12 +163,7 @@ def decode_with_bounds(code: str) -> dict:
     lat, lon = decode(code)
     bounds = get_bounds(code)
 
-    return {
-        'code': code.upper(),
-        'lat': lat,
-        'lon': lon,
-        'bounds': bounds
-    }
+    return {"code": code.upper(), "lat": lat, "lon": lon, "bounds": bounds}
 
 
 def batch_decode(codes: list) -> list:

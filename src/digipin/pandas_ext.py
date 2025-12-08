@@ -45,10 +45,12 @@ class DigipinAccessor:
     def __init__(self, pandas_obj):
         self._obj = pandas_obj
 
-    def encode(self,
-               lat_col: Union[str, pd.Series],
-               lon_col: Union[str, pd.Series],
-               precision: int = 10) -> pd.Series:
+    def encode(
+        self,
+        lat_col: Union[str, pd.Series],
+        lon_col: Union[str, pd.Series],
+        precision: int = 10,
+    ) -> pd.Series:
         """
         Encode coordinate columns into DIGIPIN codes.
 
@@ -70,11 +72,10 @@ class DigipinAccessor:
 
         # Use list comprehension (faster than .apply for string operations)
         results = [
-            encode(lat, lon, precision=precision)
-            for lat, lon in zip(lats, lons)
+            encode(lat, lon, precision=precision) for lat, lon in zip(lats, lons)
         ]
 
-        return pd.Series(results, index=self._obj.index, name='digipin')
+        return pd.Series(results, index=self._obj.index, name="digipin")
 
     def decode(self, code_col: Union[str, pd.Series]) -> pd.DataFrame:
         """
@@ -96,9 +97,7 @@ class DigipinAccessor:
         results = [decode(code) for code in codes]
 
         return pd.DataFrame(
-            results,
-            columns=['latitude', 'longitude'],
-            index=self._obj.index
+            results, columns=["latitude", "longitude"], index=self._obj.index
         )
 
     def is_valid(self, code_col: Union[str, pd.Series]) -> pd.Series:
@@ -117,9 +116,7 @@ class DigipinAccessor:
         """
         codes = self._obj[code_col] if isinstance(code_col, str) else code_col
         return pd.Series(
-            [is_valid(c) for c in codes],
-            index=self._obj.index,
-            dtype=bool
+            [is_valid(c) for c in codes], index=self._obj.index, dtype=bool
         )
 
     def get_parent(self, code_col: Union[str, pd.Series], level: int) -> pd.Series:
@@ -142,15 +139,12 @@ class DigipinAccessor:
         codes = self._obj[code_col] if isinstance(code_col, str) else code_col
 
         # Handle cases where code might be shorter than requested level
-        results = [
-            get_parent(c, level) if len(str(c)) > level else c
-            for c in codes
-        ]
+        results = [get_parent(c, level) if len(str(c)) > level else c for c in codes]
         return pd.Series(results, index=self._obj.index)
 
-    def neighbors(self,
-                  code_col: Union[str, pd.Series],
-                  direction: str = 'all') -> pd.Series:
+    def neighbors(
+        self, code_col: Union[str, pd.Series], direction: str = "all"
+    ) -> pd.Series:
         """
         Get adjacent neighbors for every row.
 
