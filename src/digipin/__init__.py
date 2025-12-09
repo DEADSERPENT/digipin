@@ -51,9 +51,19 @@ Django Integration (Optional):
         from digipin.django_ext import DigipinField
         class MyModel(models.Model):
             code = DigipinField()
+
+FastAPI Integration (Optional):
+    For high-performance APIs and microservices:
+        pip install digipinpy[fastapi]
+
+    Then mount the pre-built router:
+        from fastapi import FastAPI
+        from digipin.fastapi_ext import router as digipin_router
+        app = FastAPI()
+        app.include_router(digipin_router, prefix="/api/v1")
 """
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 

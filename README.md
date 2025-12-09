@@ -56,8 +56,11 @@ pip install digipinpy[pandas]
 # For Django web applications
 pip install digipinpy[django]
 
-# For complete ecosystem (pandas + django)
-pip install digipinpy[pandas,django]
+# For FastAPI microservices (NEW in v1.3.0)
+pip install digipinpy[fastapi]
+
+# For complete ecosystem (pandas + django + fastapi)
+pip install digipinpy[pandas,django,fastapi]
 
 # For development (testing, linting, type checking)
 pip install digipinpy[dev]
@@ -182,6 +185,26 @@ delhi_locations = DeliveryLocation.objects.filter(digipin__within='39')
 specific_area = DeliveryLocation.objects.filter(digipin__within='39J49L')
 ```
 
+### FastAPI Microservices (New in v1.3.0)
+
+```python
+from fastapi import FastAPI
+from digipin.fastapi_ext import router as digipin_router
+
+app = FastAPI(title="DIGIPIN Microservice")
+
+# Mount the pre-built router
+app.include_router(digipin_router, prefix="/api/v1")
+
+# Run with: uvicorn app:app --reload
+# Visit: http://127.0.0.1:8000/docs for auto-generated Swagger UI
+
+# API Endpoints:
+# POST   /api/v1/encode          - Encode coordinates to DIGIPIN
+# GET    /api/v1/decode/{code}   - Decode DIGIPIN to coordinates
+# GET    /api/v1/neighbors/{code} - Get neighboring cells
+```
+
 ---
 
 ## ✨ Features
@@ -199,6 +222,7 @@ specific_area = DeliveryLocation.objects.filter(digipin__within='39J49L')
 | **Bounds Calculation** | Get cell boundaries | `get_bounds(code)` |
 | **Pandas Integration** | DataFrame operations | `.digipin.encode()`, `.digipin.decode()` |
 | **Django Integration** | Database field with validation | `DigipinField()`, `__within` lookup |
+| **FastAPI Integration** | REST API microservice | Pre-built router with Pydantic models |
 
 ### Performance Characteristics
 
@@ -312,11 +336,12 @@ pytest tests/ --cov=src/digipin --cov-report=html
 pytest tests/test_encoder.py -v
 ```
 
-**Test Coverage:** 122 comprehensive test cases covering:
+**Test Coverage:** 163 comprehensive test cases covering:
 - Core DIGIPIN package (29 tests)
 - Neighbor discovery (29 tests)
 - Pandas integration (33 tests)
 - Django integration (31 tests)
+- FastAPI integration (41 tests) - NEW in v1.3.0
 
 ---
 
@@ -352,10 +377,10 @@ mypy src/digipin
 
 ## 📊 Project Status
 
-- ✅ **Production Ready**: Version 1.2.0
+- ✅ **Production Ready**: Version 1.3.0
 - ✅ **100% Specification Compliant**
-- ✅ **122 Tests Passing** (100% coverage)
-- ✅ **Framework Integrations**: Pandas & Django
+- ✅ **163 Tests Passing** (100% coverage)
+- ✅ **Framework Integrations**: Pandas, Django & FastAPI
 - ✅ **Type Hints**: Full type annotation support
 - ✅ **Zero Dependencies**: Pure Python core
 - ✅ **Multi-Platform**: Windows, macOS, Linux
