@@ -20,7 +20,7 @@ except ImportError:
         "Install with: pip install digipinpy[fastapi]"
     )
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from .encoder import encode, batch_encode
 from .decoder import decode, batch_decode, get_bounds
 from .neighbors import get_neighbors
@@ -79,7 +79,7 @@ async def decode_code(code: str, include_bounds: bool = False):
         raise HTTPException(status_code=400, detail="Invalid DIGIPIN code")
 
     lat, lon = decode(code)
-    response = {"lat": lat, "lon": lon}
+    response: Dict[str, Any] = {"lat": lat, "lon": lon}
 
     if include_bounds:
         response["bounds"] = list(get_bounds(code))

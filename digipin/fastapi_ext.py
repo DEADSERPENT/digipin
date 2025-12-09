@@ -20,7 +20,7 @@ except ImportError:
         "Install with: pip install digipinpy[fastapi]"
     )
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from .encoder import encode, batch_encode
 from .decoder import decode, batch_decode, get_bounds
 from .neighbors import get_neighbors
@@ -66,9 +66,7 @@ router = APIRouter(tags=["DIGIPIN"])
 
 
 @router.post("/encode", response_model=EncodeResponse)
-async def encode_coordinate(
-    coord: Coordinate, precision: int = Query(10, ge=1, le=10)
-):
+async def encode_coordinate(coord: Coordinate, precision: int = Query(10, ge=1, le=10)):
     """Encode a latitude/longitude pair into a DIGIPIN code."""
     code = encode(coord.lat, coord.lon, precision=precision)
     return {"code": code, "precision": precision}
@@ -81,7 +79,7 @@ async def decode_code(code: str, include_bounds: bool = False):
         raise HTTPException(status_code=400, detail="Invalid DIGIPIN code")
 
     lat, lon = decode(code)
-    response = {"lat": lat, "lon": lon}
+    response: Dict[str, Any] = {"lat": lat, "lon": lon}
 
     if include_bounds:
         response["bounds"] = list(get_bounds(code))
