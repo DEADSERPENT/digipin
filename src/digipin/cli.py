@@ -6,7 +6,7 @@ Provides easy command-line access to encode, decode, and validate DIGIPIN codes.
 
 import sys
 import argparse
-from typing import Optional
+from typing import Optional, Dict, Any
 
 # Fix Windows console encoding for unicode characters
 if sys.platform == "win32":
@@ -65,7 +65,7 @@ def cmd_decode(args):
         if args.format == "json":
             import json
 
-            output = {"latitude": lat, "longitude": lon}
+            output: Dict[str, Any] = {"latitude": lat, "longitude": lon}
             if args.bbox:
                 min_lat, max_lat, min_lon, max_lon = get_bounds(code)
                 output["bbox"] = {
