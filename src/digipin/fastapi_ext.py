@@ -66,9 +66,7 @@ router = APIRouter(tags=["DIGIPIN"])
 
 
 @router.post("/encode", response_model=EncodeResponse)
-async def encode_coordinate(
-    coord: Coordinate, precision: int = Query(10, ge=1, le=10)
-):
+async def encode_coordinate(coord: Coordinate, precision: int = Query(10, ge=1, le=10)):
     """Encode a latitude/longitude pair into a DIGIPIN code."""
     code = encode(coord.lat, coord.lon, precision=precision)
     return {"code": code, "precision": precision}
