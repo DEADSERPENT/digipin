@@ -23,7 +23,17 @@ DIGIPIN (Digital Postal Index Number) is India's new national geocoding system d
 ## Installation
 
 ```bash
+# Core package (zero dependencies)
 pip install digipinpy
+
+# With Pandas integration (NEW in v1.2.0)
+pip install digipinpy[pandas]
+
+# With Django integration (NEW in v1.2.0)
+pip install digipinpy[django]
+
+# With both Pandas and Django
+pip install digipinpy[pandas,django]
 ```
 
 ## Quick Start
@@ -130,7 +140,7 @@ region = '39J49L'  # ~1km grid
 child_cells = [region + c for c in DIGIPIN_ALPHABET[:16]]
 ```
 
-### Data Science with Pandas
+### Data Science with Pandas (NEW in v1.2.0)
 
 ```python
 import pandas as pd
@@ -146,6 +156,26 @@ df['digipin'] = df.digipin.encode('lat', 'lon')
 
 # Decode back
 df[['lat_dec', 'lon_dec']] = df.digipin.decode('digipin')
+
+# Validate codes
+df['valid'] = df.digipin.is_valid('digipin')
+
+# Get parent regions
+df['region'] = df.digipin.get_parent('digipin', level=5)
+```
+
+### Django Web Applications (NEW in v1.2.0)
+
+```python
+from django.db import models
+from digipin.django_ext import DigipinField
+
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+    digipin = DigipinField()  # Auto-validates & normalizes!
+
+# Hierarchical queries
+Location.objects.filter(digipin__within='39J49')  # All in region 39J49
 ```
 
 ## Specification Compliance
@@ -160,10 +190,11 @@ All encoding and decoding operations follow the exact algorithms specified in th
 
 ## Performance Characteristics
 
-- **Zero Dependencies**: Pure Python, no external libraries required
+- **Zero Dependencies**: Pure Python core, optional framework integrations
 - **Fast Encoding**: ~50,000 encodes/second on modern hardware
 - **Memory Efficient**: Stateless operations, minimal memory footprint
 - **Thread Safe**: All functions are immutable and thread-safe
+- **Framework Ready**: Native Pandas and Django support (v1.2.0+)
 
 ## Support & Community
 

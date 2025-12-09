@@ -5,13 +5,16 @@
 1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [Quick Start Guide](#quick-start-guide)
-4. [Core Concepts](#core-concepts)
-5. [API Reference](#api-reference)
-6. [Usage Examples](#usage-examples)
-7. [Technical Specification](#technical-specification)
-8. [Testing & Validation](#testing--validation)
-9. [Performance](#performance)
-10. [Frequently Asked Questions](#frequently-asked-questions)
+4. [Framework Integrations](#framework-integrations)
+   - [Pandas Integration](#pandas-integration)
+   - [Django Integration](#django-integration)
+5. [Core Concepts](#core-concepts)
+6. [API Reference](#api-reference)
+7. [Usage Examples](#usage-examples)
+8. [Technical Specification](#technical-specification)
+9. [Testing & Validation](#testing--validation)
+10. [Performance](#performance)
+11. [Frequently Asked Questions](#frequently-asked-questions)
 
 ---
 
@@ -21,24 +24,31 @@
 
 DIGIPIN (Digital Postal Index Number) is India's official national-level addressing grid system developed by the Department of Posts in collaboration with IIT Hyderabad and NRSC, ISRO. It provides a standardized, geo-coded addressing framework for the entire country.
 
-### What's New in v1.1.0
+### What's New in v1.2.0
 
-**Neighbor Discovery** - The most requested feature is now available!
+**Framework Integrations** - Pandas & Django support is here!
 
-Version 1.1.0 introduces powerful neighbor discovery capabilities that enable proximity-based queries and area expansion:
+Version 1.2.0 brings DIGIPIN to the Python ecosystem with native integrations for the most popular frameworks:
 
-- **`get_neighbors()`** - Find immediately adjacent grid cells (all 8 directions or specific directions)
-- **`get_disk()`** - Get all cells within a radius (perfect for "search nearby" features)
-- **`get_ring()`** - Get cells at a specific distance (useful for progressive search)
-- **Convenience aliases** - `get_surrounding_cells()` and `expand_search_area()`
+#### Django Integration (NEW)
+- **`DigipinField`** - Custom model field with automatic validation and normalization
+- **`__within` lookup** - Hierarchical region queries via SQL LIKE
+- **Auto-uppercase** - Codes automatically normalized in the database
+- **Migration support** - Clean Django migrations via `deconstruct()`
 
-These features unlock critical use cases:
-- **Delivery routing**: "Find all delivery zones near this warehouse"
-- **Emergency services**: "Which ambulances can reach this incident?"
-- **Restaurant search**: "Show all restaurants within 100m"
-- **Real estate**: "Find properties in this neighborhood"
+#### Pandas Integration (NEW)
+- **DataFrame accessor** - `df.digipin` namespace for data science workflows
+- **Vectorized operations** - Encode/decode thousands of coordinates efficiently
+- **Data validation** - Filter invalid codes in your DataFrames
+- **Hierarchical grouping** - Aggregate data by regions using `get_parent()`
+- **Neighbor discovery** - Find neighbors for every row in a DataFrame
 
-See the [Neighbor Discovery API Reference](#neighbor-discovery-operations) and [Example 6](#example-6-neighbor-discovery--proximity-search-new-in-v110) for details.
+#### Previous: v1.1.0 - Neighbor Discovery
+- **`get_neighbors()`** - Find immediately adjacent grid cells
+- **`get_disk()`** - Get all cells within a radius
+- **`get_ring()`** - Get cells at a specific distance
+
+See the [Framework Integrations](#framework-integrations) section for complete guides.
 
 ### Key Features
 
@@ -74,7 +84,17 @@ See the [Neighbor Discovery API Reference](#neighbor-discovery-operations) and [
 ### Install from PyPI
 
 ```bash
+# Core package (zero dependencies)
 pip install digipinpy
+
+# With Pandas integration
+pip install digipinpy[pandas]
+
+# With Django integration
+pip install digipinpy[django]
+
+# With both Pandas and Django
+pip install digipinpy[pandas,django]
 ```
 
 ### Install from Source
@@ -143,6 +163,217 @@ print(neighbors)  # ['39J49LL8T9', '39J49LL8TC', ...]
 # Search within a radius
 search_area = get_disk(my_location, radius=5)
 print(f"Search area: {len(search_area)} cells")  # ~50 cells
+```
+
+---
+
+## Framework Integrations
+
+### Pandas Integration
+
+The Pandas integration provides a DataFrame accessor for efficient geospatial data processing.
+
+#### Installation
+
+```bash
+pip install digipinpy[pandas]
+```
+
+#### Quick Start
+
+```python
+import pandas as pd
+import digipin.pandas_ext  # Register the accessor
+
+df = pd.DataFrame({
+    'name': ['Location A', 'Location B', 'Location C'],
+    'lat': [28.622788, 19.076090, 13.082680],
+    'lon': [77.213033, 72.877426, 80.270721]
+})
+
+# Encode coordinates to DIGIPIN codes
+df['code'] = df.digipin.encode('lat', 'lon')
+
+# Decode back to coordinates
+coords = df.digipin.decode('code')
+df[['decoded_lat', 'decoded_lon']] = coords
+
+# Validate codes
+df['is_valid'] = df.digipin.is_valid('code')
+
+# Get parent regions for grouping
+df['region'] = df.digipin.get_parent('code', level=4)
+
+# Get neighbors for proximity searches
+df['neighbors'] = df.digipin.neighbors('code')
+```
+
+#### API Methods
+
+| Method | Description | Returns |
+|--------|-------------|---------|
+| `.encode(lat_col, lon_col, precision=10)` | Encode coordinate columns | Series of DIGIPIN codes |
+| `.decode(code_col)` | Decode to coordinates | DataFrame with lat/lon columns |
+| `.is_valid(code_col)` | Validate codes | Boolean Series |
+| `.get_parent(code_col, level)` | Get parent at hierarchy level | Series of parent codes |
+| `.neighbors(code_col, direction='all')` | Get neighbors for each row | Series of neighbor lists |
+
+#### Use Cases
+
+**Data Cleaning:**
+```python
+# Filter to only valid codes
+valid_df = df[df.digipin.is_valid('code')]
+
+# Remove duplicates at city level (precision 6)
+df['city_code'] = df.digipin.encode('lat', 'lon', precision=6)
+df_unique = df.drop_duplicates('city_code')
+```
+
+**Regional Analysis:**
+```python
+# Group by state/region (first 2 characters)
+df['state'] = df.digipin.get_parent('code', level=2)
+state_stats = df.groupby('state').agg({'value': 'sum'})
+```
+
+**Proximity Search:**
+```python
+# Find nearby locations
+df['search_area'] = df.digipin.neighbors('code')
+expanded = df.explode('search_area')
+# Join with points of interest
+nearby = poi_df[poi_df['code'].isin(expanded['search_area'])]
+```
+
+### Django Integration
+
+The Django integration provides a custom model field with automatic validation and database lookups.
+
+#### Installation
+
+```bash
+pip install digipinpy[django]
+```
+
+#### Quick Start
+
+```python
+from django.db import models
+from digipin.django_ext import DigipinField
+
+class DeliveryLocation(models.Model):
+    name = models.CharField(max_length=100)
+    digipin = DigipinField()  # Auto-validates & normalizes!
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['digipin']),
+        ]
+
+# Create a location
+location = DeliveryLocation.objects.create(
+    name="Customer Home",
+    digipin="39j49ll8t4"  # Auto-converted to uppercase: 39J49LL8T4
+)
+
+# Hierarchical queries with custom lookup
+delhi_locations = DeliveryLocation.objects.filter(digipin__within='39')
+specific_area = DeliveryLocation.objects.filter(digipin__within='39J49L')
+```
+
+#### Field Features
+
+- **Auto-validation**: Invalid DIGIPIN codes raise `ValidationError`
+- **Auto-normalization**: Lowercase codes converted to uppercase
+- **Strict by default**: Only accepts full 10-character codes
+- **Migration support**: Clean `deconstruct()` for Django migrations
+- **Database-efficient**: Uses `CharField(max_length=10)` internally
+
+#### Custom Lookups
+
+**`__within` - Hierarchical Region Queries:**
+
+```python
+# Find all locations in Delhi region (starts with '39')
+Location.objects.filter(digipin__within='39')
+
+# Find in specific neighborhood
+Location.objects.filter(digipin__within='39J49L')
+
+# SQL translation: SELECT * FROM location WHERE digipin LIKE '39J49L%'
+```
+
+#### Django Admin Integration
+
+```python
+from django.contrib import admin
+from .models import DeliveryLocation
+
+@admin.register(DeliveryLocation)
+class DeliveryLocationAdmin(admin.ModelAdmin):
+    list_display = ['name', 'digipin', 'created_at']
+    search_fields = ['name', 'digipin']
+    list_filter = ['created_at']
+```
+
+#### Django REST Framework
+
+```python
+from rest_framework import serializers, viewsets
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryLocation
+        fields = ['id', 'name', 'digipin']
+    # DigipinField validation happens automatically!
+
+class LocationViewSet(viewsets.ModelViewSet):
+    queryset = DeliveryLocation.objects.all()
+    serializer_class = LocationSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        region = self.request.query_params.get('region')
+        if region:
+            queryset = queryset.filter(digipin__within=region)
+        return queryset
+```
+
+#### Use Cases
+
+**Warehouse Management:**
+```python
+class Warehouse(models.Model):
+    name = models.CharField(max_length=200)
+    location = DigipinField(db_index=True)
+    capacity = models.IntegerField()
+
+# Find warehouses in Delhi region
+delhi_warehouses = Warehouse.objects.filter(location__within='39')
+
+# Aggregate by region
+from django.db.models import Count
+from django.db.models.functions import Substr
+
+region_counts = (
+    Warehouse.objects
+    .annotate(region=Substr('location', 1, 2))
+    .values('region')
+    .annotate(count=Count('id'))
+)
+```
+
+**Address Validation:**
+```python
+from django import forms
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = DeliveryLocation
+        fields = ['name', 'digipin']
+
+    # Validation happens automatically via DigipinField.validate()
 ```
 
 ---
@@ -653,6 +884,10 @@ from digipin import get_surrounding_cells, expand_search_area
 from digipin import is_valid_coordinate, get_precision_info
 from digipin import get_grid_size, get_approx_distance
 
+# Framework Integrations (NEW in v1.2.0)
+import digipin.pandas_ext  # Enables df.digipin accessor (requires: pip install digipinpy[pandas])
+from digipin.django_ext import DigipinField  # Django model field (requires: pip install digipinpy[django])
+
 # Constants
 from digipin import (
     LAT_MIN,          # 2.5 (minimum latitude)
@@ -921,52 +1156,49 @@ pytest tests/test_official_spec.py::TestOfficialSpecification::test_dak_bhawan_o
 
 ### Test Coverage
 
-**Comprehensive test suite covering:**
+**Comprehensive test suite with 122 tests covering:**
 
-1. **Official Specification Compliance**
+1. **Official Specification Compliance** (29 tests)
    - Dak Bhawan official example (28.622788°N, 77.213033°E → `39J49LL8T4`)
    - Major cities across India
    - Round-trip encoding/decoding accuracy
+   - Boundary conditions and edge cases
+   - Validation and hierarchical operations
+   - Grid system verification
 
-2. **Boundary Conditions**
-   - Bounding box corners
-   - Edge cases at grid lines
-   - Center of India
-
-3. **Validation**
-   - Coordinate validation
-   - Code format validation
-   - Character alphabet verification
-
-4. **Hierarchical Operations**
-   - Parent code extraction
-   - Containment checking
-   - Multi-level operations
-
-5. **Grid System**
-   - Spiral pattern verification
-   - Position-symbol mapping
-   - Grid size calculations
-
-6. **Neighbor Discovery** (NEW in v1.1.0)
+2. **Neighbor Discovery** (29 tests - v1.1.0)
    - Immediate neighbor detection
    - Cardinal vs. all directions
    - Ring and disk expansion
    - Boundary edge cases
    - Multi-level neighbor queries
 
-7. **Constants & Configuration**
-   - Alphabet composition
-   - Bounding box dimensions
-   - Level configuration
+3. **Pandas Integration** (33 tests - NEW in v1.2.0)
+   - DataFrame encoding/decoding
+   - Column validation
+   - Parent code extraction
+   - Neighbor discovery
+   - Error handling
+   - Performance benchmarks
+
+4. **Django Integration** (31 tests - NEW in v1.2.0)
+   - Model field validation
+   - Auto-normalization
+   - Database operations
+   - Custom lookups (`__within`)
+   - Form validation
+   - Migration support
 
 ### Validation Results
 
-- **Test Success Rate**: 100% (all tests passing)
+- **Total Tests**: 122 (100% passing)
+- **Test Success Rate**: 100%
 - **Official Example**: ✓ PASS
 - **Round-trip Accuracy**: < 5m error
 - **Edge Cases**: ✓ ALL PASS
-- **Neighbor Discovery**: ✓ ALL PASS (NEW)
+- **Neighbor Discovery**: ✓ ALL PASS (v1.1.0)
+- **Pandas Integration**: ✓ ALL PASS (NEW in v1.2.0)
+- **Django Integration**: ✓ ALL PASS (NEW in v1.2.0)
 - **Specification Compliance**: 100%
 
 ---
@@ -984,10 +1216,13 @@ Tested on: Intel i5, Python 3.10
 | Batch encode (100) | ~2.5 ms | ~40,000 ops/sec |
 | Batch decode (100) | ~2.0 ms | ~50,000 ops/sec |
 | Validation | ~5 μs | ~200,000 ops/sec |
-| **Neighbor discovery** (NEW) | ~200 μs | ~5,000 ops/sec |
+| **Neighbor discovery** (v1.1.0) | ~200 μs | ~5,000 ops/sec |
 | **get_disk(radius=1)** | ~300 μs | ~3,300 ops/sec |
 | **get_disk(radius=10)** | ~4 ms | ~250 ops/sec |
 | **get_ring(radius=5)** | ~1.5 ms | ~670 ops/sec |
+| **Pandas encode (1000 rows)** (NEW) | ~5 sec | ~200 rows/sec |
+| **Pandas decode (500 rows)** (NEW) | ~3 sec | ~167 rows/sec |
+| **Django field validation** (NEW) | ~0.1 ms | ~10,000 ops/sec |
 
 ### Memory Usage
 
@@ -1046,16 +1281,25 @@ A: `get_ring(code, radius)` returns only cells at exactly the specified distance
 ### Integration Questions
 
 **Q: How do I integrate with Django/Flask?**
-A: Import and use functions directly in your views/routes. No special integration needed.
+A: For Django, use the `DigipinField` model field (v1.2.0+). For Flask or other frameworks, import and use functions directly in your views/routes.
+
+**Q: How do I use DIGIPIN with Pandas DataFrames?** (NEW in v1.2.0)
+A: Install `digipinpy[pandas]` and import `digipin.pandas_ext`. This registers the `df.digipin` accessor for encoding, decoding, and validation on DataFrame columns.
+
+**Q: How do I use DIGIPIN in Django models?** (NEW in v1.2.0)
+A: Install `digipinpy[django]` and use `from digipin.django_ext import DigipinField`. Add it to your model like any CharField. It auto-validates and normalizes codes. Use the `__within` lookup for hierarchical queries.
 
 **Q: Can I use this with GPS devices?**
 A: Yes, convert GPS coordinates (lat/lon) to DIGIPIN using `encode()`.
 
 **Q: How do I store DIGIPIN codes in database?**
-A: Store as `VARCHAR(10)` or `CHAR(10)`. Consider indexing for fast lookups.
+A: Use Django's `DigipinField` for automatic validation, or store as `VARCHAR(10)` or `CHAR(10)`. Consider indexing for fast lookups.
 
 **Q: Can I display DIGIPIN on maps?**
 A: Yes, decode to coordinates and use any mapping library (Folium, Plotly, Google Maps).
+
+**Q: Do the Pandas and Django integrations require additional dependencies?**
+A: Yes. Pandas integration requires `pandas>=1.3.0` and `numpy>=1.21.0`. Django integration requires `django>=3.2`. The core package has zero dependencies.
 
 ---
 
@@ -1067,21 +1311,28 @@ digipinpy/
 │   ├── __init__.py         # Public API exports
 │   ├── encoder.py          # Coordinate → DIGIPIN encoding
 │   ├── decoder.py          # DIGIPIN → Coordinate decoding
-│   ├── neighbors.py        # Neighbor discovery (NEW in v1.1.0)
+│   ├── neighbors.py        # Neighbor discovery (v1.1.0)
+│   ├── pandas_ext.py       # Pandas integration (NEW in v1.2.0)
+│   ├── django_ext.py       # Django integration (NEW in v1.2.0)
 │   ├── utils.py            # Constants, validation, utilities
 │   └── cli.py              # Command-line interface
 ├── tests/
 │   ├── __init__.py
-│   ├── test_official_spec.py  # Comprehensive test suite
-│   └── test_neighbors.py   # Neighbor discovery tests (NEW)
+│   ├── test_official_spec.py     # Core DIGIPIN tests (29 tests)
+│   ├── test_neighbors.py         # Neighbor discovery tests (29 tests)
+│   ├── test_pandas_integration.py  # Pandas tests (NEW - 33 tests)
+│   └── test_django_integration.py  # Django tests (NEW - 31 tests)
 ├── examples/
 │   ├── basic_usage.py      # Basic examples
 │   ├── advanced_usage.py   # Advanced examples
 │   ├── delivery_app.py     # Real-world application
-│   └── neighbor_discovery.py  # Neighbor discovery examples (NEW)
+│   ├── neighbor_discovery.py  # Neighbor discovery examples
+│   ├── pandas_usage.py     # Pandas integration examples (NEW)
+│   └── django_example.py   # Django integration examples (NEW)
 ├── images/                  # Official specification diagrams
-├── DOCUMENTATION.md         # This file
+├── DOCUMENTATION.md         # This file (complete API reference)
 ├── README.md               # Quick start guide
+├── CHANGELOG.md            # Version history
 ├── LICENSE                 # MIT License
 ├── pyproject.toml          # Package configuration
 └── DIGIPIN_Technical_Document.md  # Official specification

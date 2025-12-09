@@ -53,11 +53,17 @@ pip install digipinpy
 # For data science workflows with Pandas
 pip install digipinpy[pandas]
 
+# For Django web applications
+pip install digipinpy[django]
+
+# For complete ecosystem (pandas + django)
+pip install digipinpy[pandas,django]
+
 # For development (testing, linting, type checking)
 pip install digipinpy[dev]
 ```
 
-**Requirements:** Python 3.7+
+**Requirements:** Python 3.8+ (3.7 supported but not tested in CI)
 
 ---
 
@@ -128,7 +134,7 @@ print(codes)  # ['39J49LL8T4', '2MK8MP3K63', '2C4LKPTM5T']
 coordinates = batch_decode(codes)
 ```
 
-### Data Science with Pandas
+### Data Science with Pandas (New in v1.2.0)
 
 ```python
 import pandas as pd
@@ -146,7 +152,34 @@ df['digipin_code'] = df.digipin.encode('lat', 'lon')
 # Decode back to coordinates
 df[['decoded_lat', 'decoded_lon']] = df.digipin.decode('digipin_code')
 
+# Validate codes
+df['is_valid'] = df.digipin.is_valid('digipin_code')
+
+# Get parent regions for grouping
+df['district'] = df.digipin.get_parent('digipin_code', level=5)
+
 print(df)
+```
+
+### Django Web Applications (New in v1.2.0)
+
+```python
+from django.db import models
+from digipin.django_ext import DigipinField
+
+class DeliveryLocation(models.Model):
+    name = models.CharField(max_length=100)
+    digipin = DigipinField()  # Auto-validates and normalizes!
+
+# Usage
+location = DeliveryLocation.objects.create(
+    name="Customer Home",
+    digipin="39j49ll8t4"  # Automatically converted to '39J49LL8T4'
+)
+
+# Hierarchical queries with custom lookup
+delhi_locations = DeliveryLocation.objects.filter(digipin__within='39')
+specific_area = DeliveryLocation.objects.filter(digipin__within='39J49L')
 ```
 
 ---
@@ -165,6 +198,7 @@ print(df)
 | **Hierarchical Ops** | Parent/child relationships | `get_parent()`, `is_within()` |
 | **Bounds Calculation** | Get cell boundaries | `get_bounds(code)` |
 | **Pandas Integration** | DataFrame operations | `.digipin.encode()`, `.digipin.decode()` |
+| **Django Integration** | Database field with validation | `DigipinField()`, `__within` lookup |
 
 ### Performance Characteristics
 
@@ -278,7 +312,11 @@ pytest tests/ --cov=src/digipin --cov-report=html
 pytest tests/test_encoder.py -v
 ```
 
-**Test Coverage:** 31 comprehensive test cases covering all edge cases and specification requirements.
+**Test Coverage:** 122 comprehensive test cases covering:
+- Core DIGIPIN package (29 tests)
+- Neighbor discovery (29 tests)
+- Pandas integration (33 tests)
+- Django integration (31 tests)
 
 ---
 
@@ -314,12 +352,14 @@ mypy src/digipin
 
 ## 📊 Project Status
 
-- ✅ **Production Ready**: Version 1.1.0
+- ✅ **Production Ready**: Version 1.2.0
 - ✅ **100% Specification Compliant**
-- ✅ **31 Tests Passing**
+- ✅ **122 Tests Passing** (100% coverage)
+- ✅ **Framework Integrations**: Pandas & Django
 - ✅ **Type Hints**: Full type annotation support
-- ✅ **Zero Dependencies**: Pure Python
+- ✅ **Zero Dependencies**: Pure Python core
 - ✅ **Multi-Platform**: Windows, macOS, Linux
+- ✅ **CI/CD**: Automated testing on Python 3.8-3.13
 
 ---
 
