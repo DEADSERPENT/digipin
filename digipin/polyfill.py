@@ -9,8 +9,8 @@ Requires:
 """
 
 try:
-    from shapely.geometry import Polygon, Point, box  # type: ignore
-    from shapely.prepared import prep  # type: ignore
+    from shapely.geometry import Polygon, Point, box
+    from shapely.prepared import prep
 
     SHAPELY_AVAILABLE = True
 except ImportError:
