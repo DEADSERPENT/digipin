@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "digipinpy"
-version = "1.4.0"
+version = "1.4.1"
 description = "Official Python implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -33,6 +33,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",

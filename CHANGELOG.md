@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2025-12-10
+
+### Fixed
+
+- **PyPI License Badge**: Added `License :: OSI Approved :: MIT License` classifier to `pyproject.toml`
+  - Fixes the PyPI license badge showing "missing"
+  - LICENSE file was present but PyPI metadata was incomplete
+
+### Added
+
+- **Codecov Integration**: Complete coverage and test analytics integration
+  - Coverage reports with `codecov-action@v5`
+  - Test analytics with `test-results-action@v1`
+  - Automatic PR comments with coverage changes
+  - JUnit XML generation for test insights
+  - Configuration file: `codecov.yml`
+  - Setup documentation: `docs/CODECOV_SETUP.md`
+
+### Changed
+
+- **Type Hints**: Removed unnecessary `# type: ignore` comments from polyfill module
+  - Shapely 2.0+ includes native type hints
+  - Cleaner code, passes MyPy without ignores
+
 ## [1.4.0] - 2025-12-09
 
 ### Added - Geospatial Polyfill: Polygon-to-Code Conversion
