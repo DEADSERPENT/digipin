@@ -3,7 +3,7 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  workflow_dispatch:  # Allow manual triggers
+  workflow_dispatch:  # Allows manual triggers
 
 permissions:
   contents: read
@@ -13,12 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+        cache: 'pip' # Optimization: fast install of build tools
 
     - name: Install build dependencies
       run: |
@@ -28,12 +29,12 @@ jobs:
     - name: Build package
       run: python -m build
 
-    - name: Check package with twine
+    - name: Verify package metadata
       run: twine check dist/*
+      # This fails the job immediately if your description/metadata is broken
 
     - name: Publish to PyPI
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: |
-        twine upload dist/*
+      # Official action from Python Packaging Authority (PyPA)
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.PYPI_TOKEN }}
