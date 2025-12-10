@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.2] - 2025-12-11
+
+### Added - New Readme File: Landing page and Docs
+
 ## [1.4.1] - 2025-12-10
 
 ### Fixed

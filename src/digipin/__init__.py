@@ -63,7 +63,7 @@ FastAPI Integration (Optional):
         app.include_router(digipin_router, prefix="/api/v1")
 """
 
-__version__ = "1.4.1"
+__version__ = "1.4.2"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
