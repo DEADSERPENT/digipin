@@ -13,8 +13,10 @@ Tests cover:
 """
 
 import pytest
-import pandas as pd
-import numpy as np
+
+# Skip all tests if pandas not available (using importorskip)
+pd = pytest.importorskip("pandas")
+np = pytest.importorskip("numpy")
 
 # Try to import pandas extension
 try:
@@ -26,7 +28,7 @@ except ImportError:
 
 from digipin import encode, decode, is_valid
 
-# Skip all tests if pandas not available
+# Additional skip check for pandas extension
 pytestmark = pytest.mark.skipif(
     not PANDAS_AVAILABLE,
     reason="pandas not installed (install with: pip install digipinpy[pandas])",
