@@ -45,16 +45,23 @@ jobs:
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
       run: |
         pip install pytest-cov
-        pytest tests/ --cov=src/digipin --cov-report=xml --cov-report=term
+        pytest tests/ --cov=src/digipin --cov-report=xml --cov-report=term --junitxml=junit.xml
 
     - name: Upload coverage to Codecov
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
+
+    - name: Upload test results to Codecov
+      if: ${{ !cancelled() }} && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+      uses: codecov/test-results-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
     runs-on: ubuntu-latest

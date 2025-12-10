@@ -8,7 +8,7 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/digipinpy.svg)](https://pypi.org/project/digipinpy/)
 [![License](https://img.shields.io/pypi/l/digipinpy.svg)](https://github.com/DEADSERPENT/digipinpy/blob/main/LICENSE)
 [![Tests](https://github.com/DEADSERPENT/digipinpy/workflows/Tests/badge.svg)](https://github.com/DEADSERPENT/digipinpy/actions)
-[![codecov](https://codecov.io/gh/DEADSERPENT/digipinpy/branch/main/graph/badge.svg)](https://codecov.io/gh/DEADSERPENT/digipinpy)
+[![codecov](https://codecov.io/github/DEADSERPENT/digipinpy/graph/badge.svg?token=G8NZBWAWPY)](https://codecov.io/github/DEADSERPENT/digipinpy)
 [![Downloads](https://static.pepy.tech/badge/digipinpy)](https://pepy.tech/project/digipinpy)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
