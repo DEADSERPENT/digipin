@@ -2,7 +2,7 @@
 
 # 🇮🇳 DIGIPIN-Py
 
-**The Official Python Implementation of India's National Addressing Grid**
+**Official Python implementation of India's national geocoding standard**
 
 [![PyPI version](https://img.shields.io/pypi/v/digipinpy.svg?color=blue)](https://pypi.org/project/digipinpy/)
 [![Python Version](https://img.shields.io/pypi/pyversions/digipinpy.svg)](https://pypi.org/project/digipinpy/)
@@ -10,458 +10,179 @@
 [![Tests](https://github.com/DEADSERPENT/digipinpy/workflows/Tests/badge.svg)](https://github.com/DEADSERPENT/digipinpy/actions)
 [![codecov](https://codecov.io/github/DEADSERPENT/digipinpy/graph/badge.svg?token=G8NZBWAWPY)](https://codecov.io/github/DEADSERPENT/digipinpy)
 [![Downloads](https://static.pepy.tech/badge/digipinpy)](https://pepy.tech/project/digipinpy)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-*Based on the Department of Posts, Ministry of Communications Specification (March 2025)*
-
-[Installation](#-installation) •
-[Quick Start](#-quick-start) •
-[Features](#-features) •
 [Documentation](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/index.md) •
 [API Reference](https://github.com/DEADSERPENT/digipinpy/blob/main/DOCUMENTATION.md) •
-[Contributing](CONTRIBUTING.md)
+[Getting Started](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/getting-started.md) •
+[Contributing](CONTRIBUTING.md) •
+[Changelog](CHANGELOG.md)
 
 </div>
 
 ---
 
-## 📍 What is DIGIPIN?
+## What is DIGIPIN?
 
-**DIGIPIN** (Digital Postal Index Number) is India's revolutionary national geocoding system developed by the **Department of Posts, Ministry of Communications, Government of India**. It divides the entire country into a seamless hierarchical grid of **4m × 4m** cells, assigning a unique 10-character code to every location.
+**DIGIPIN** (Digital Postal Index Number) is India's national geocoding system developed by the **Department of Posts, Ministry of Communications, Government of India**. It divides the entire country into a hierarchical grid, assigning a unique code to every ~4m × 4m location.
 
-`digipinpy` is a high-performance, zero-dependency Python library implementing the official specification with precision and efficiency.
+**digipinpy** is a high-performance, zero-dependency Python library implementing the official specification with 100% compliance.
 
-### 🎯 Why DIGIPIN?
+### Key Features
 
-- **🏛️ Government Standard**: Official addressing system for India
-- **🎯 Pinpoint Accuracy**: ~3.8 meter precision at level 10
-- **🗺️ Hierarchical**: Variable precision from 1000km down to 3.8m
-- **🔒 Privacy-First**: Convert coordinates to codes without storing personal data
-- **📦 Zero Dependencies**: Pure Python, lightweight, fast
+- 🎯 **Pinpoint Accuracy** - ~3.8m precision at level 10
+- 🗺️ **Hierarchical Grid** - Variable precision from 1000km down to 4m
+- 📦 **Zero Dependencies** - Pure Python core, optional framework integrations
+- ⚡ **High Performance** - ~50,000 encodes/second
+- 🔌 **Framework Ready** - Native Pandas, Django, FastAPI & geospatial support
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 pip install digipinpy
 ```
 
-**Optional Dependencies:**
+**Optional integrations:**
 
 ```bash
-# For data science workflows with Pandas
-pip install digipinpy[pandas]
-
-# For Django web applications
-pip install digipinpy[django]
-
-# For FastAPI microservices (NEW in v1.3.0)
-pip install digipinpy[fastapi]
-
-# For geospatial operations - Polyfill (NEW in v1.4.0)
-pip install digipinpy[geo]
-
-# For complete ecosystem (pandas + django + fastapi + geo)
-pip install digipinpy[pandas,django,fastapi,geo]
-
-# For development (testing, linting, type checking)
-pip install digipinpy[dev]
+pip install digipinpy[pandas]    # Data science with Pandas
+pip install digipinpy[django]    # Django database field
+pip install digipinpy[fastapi]   # FastAPI microservices
+pip install digipinpy[geo]       # Geospatial polyfill
 ```
-
-**Requirements:** Python 3.8+ (3.7 supported but not tested in CI)
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### Basic Encoding & Decoding
+### Basic Usage
 
 ```python
 from digipin import encode, decode
 
-# Encode coordinates to DIGIPIN code
+# Encode coordinates to DIGIPIN
 code = encode(28.622788, 77.213033)  # Dak Bhawan, New Delhi
-print(code)  # Output: '39J49LL8T4'
+print(code)  # '39J49LL8T4'
 
-# Decode DIGIPIN code back to coordinates
+# Decode back to coordinates
 lat, lon = decode('39J49LL8T4')
-print(f"{lat:.6f}, {lon:.6f}")  # Output: 28.622788, 77.213033
+print(f"{lat:.6f}, {lon:.6f}")  # 28.622788, 77.213033
 ```
 
 ### Variable Precision
 
 ```python
-from digipin import encode
-
 # Encode with different precision levels
-code_full = encode(28.622788, 77.213033, precision=10)  # ~3.8m accuracy
-code_city = encode(28.622788, 77.213033, precision=5)   # ~1km accuracy
-code_region = encode(28.622788, 77.213033, precision=3) # ~16km accuracy
-
-print(code_full)   # '39J49LL8T4'
-print(code_city)   # '39J49'
-print(code_region) # '39J'
+code_full = encode(28.622788, 77.213033, precision=10)  # ~3.8m
+code_city = encode(28.622788, 77.213033, precision=5)   # ~1km
+code_region = encode(28.622788, 77.213033, precision=3) # ~16km
 ```
 
-### Proximity Search (New in v1.1.0)
+### Proximity Search
 
 ```python
-from digipin import get_neighbors, get_ring, get_disk
+from digipin import get_neighbors, get_disk
 
-# Find immediate neighbors (8 surrounding cells)
+# Get 8 immediate neighbors
 neighbors = get_neighbors('39J49LL8T4')
-print(neighbors)  # ['39J49LL8T9', '39J49LL8TC', '39J49LL8TL', ...]
 
-# Get cells at a specific distance
-ring_2 = get_ring('39J49LL8T4', distance=2)
-
-# Get all cells within a radius (for area searches)
+# Get all cells within radius 3
 search_area = get_disk('39J49LL8T4', radius=3)
-print(f"Search area covers {len(search_area)} cells")
-```
-
-### Batch Processing
-
-```python
-from digipin import batch_encode, batch_decode
-
-# Encode multiple locations at once
-locations = [
-    (28.622788, 77.213033),  # New Delhi
-    (19.076090, 72.877426),  # Mumbai
-    (13.082680, 80.270721),  # Chennai
-]
-
-codes = batch_encode(locations)
-print(codes)  # ['39J49LL8T4', '2MK8MP3K63', '2C4LKPTM5T']
-
-# Decode multiple codes
-coordinates = batch_decode(codes)
-```
-
-### Data Science with Pandas (New in v1.2.0)
-
-```python
-import pandas as pd
-import digipin.pandas_ext  # Enables the .digipin accessor
-
-df = pd.DataFrame({
-    'location': ['Dak Bhawan', 'India Gate', 'Red Fort'],
-    'lat': [28.622788, 28.612912, 28.656159],
-    'lon': [77.213033, 77.229510, 77.240963]
-})
-
-# Encode coordinates to DIGIPIN codes
-df['digipin_code'] = df.digipin.encode('lat', 'lon')
-
-# Decode back to coordinates
-df[['decoded_lat', 'decoded_lon']] = df.digipin.decode('digipin_code')
-
-# Validate codes
-df['is_valid'] = df.digipin.is_valid('digipin_code')
-
-# Get parent regions for grouping
-df['district'] = df.digipin.get_parent('digipin_code', level=5)
-
-print(df)
-```
-
-### Django Web Applications (New in v1.2.0)
-
-```python
-from django.db import models
-from digipin.django_ext import DigipinField
-
-class DeliveryLocation(models.Model):
-    name = models.CharField(max_length=100)
-    digipin = DigipinField()  # Auto-validates and normalizes!
-
-# Usage
-location = DeliveryLocation.objects.create(
-    name="Customer Home",
-    digipin="39j49ll8t4"  # Automatically converted to '39J49LL8T4'
-)
-
-# Hierarchical queries with custom lookup
-delhi_locations = DeliveryLocation.objects.filter(digipin__within='39')
-specific_area = DeliveryLocation.objects.filter(digipin__within='39J49L')
-```
-
-### FastAPI Microservices (New in v1.3.0)
-
-```python
-from fastapi import FastAPI
-from digipin.fastapi_ext import router as digipin_router
-
-app = FastAPI(title="DIGIPIN Microservice")
-
-# Mount the pre-built router
-app.include_router(digipin_router, prefix="/api/v1")
-
-# Run with: uvicorn app:app --reload
-# Visit: http://127.0.0.1:8000/docs for auto-generated Swagger UI
-
-# API Endpoints:
-# POST   /api/v1/encode          - Encode coordinates to DIGIPIN
-# GET    /api/v1/decode/{code}   - Decode DIGIPIN to coordinates
-# GET    /api/v1/neighbors/{code} - Get neighboring cells
-```
-
-### Geospatial Polyfill (New in v1.4.0)
-
-```python
-from digipin import polyfill, encode
-
-# Define delivery zone as polygon
-delivery_zone = [
-    (28.6328, 77.2197),  # Top
-    (28.6289, 77.2155),  # Bottom Left
-    (28.6289, 77.2239),  # Bottom Right
-]
-
-# Convert polygon to DIGIPIN codes (precision 8 = ~60m)
-zone_codes = polyfill(delivery_zone, precision=8)
-print(f"Zone covered by {len(zone_codes)} codes")
-
-# Fast O(1) address validation
-customer_code = encode(28.6310, 77.2200, precision=8)
-if customer_code in zone_codes:
-    print("Address IS in delivery zone!")
 ```
 
 ---
 
-## ✨ Features
+## Documentation
 
-### Core Capabilities
+### 📚 User Guides
+- [Getting Started](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/getting-started.md) - Installation and first steps
+- [API Reference](https://github.com/DEADSERPENT/digipinpy/blob/main/DOCUMENTATION.md) - Complete function reference
+- [Use Cases](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/use-cases.md) - Real-world examples
 
-| Feature | Description | Function |
-|---------|-------------|----------|
-| **Encoding** | Coordinates → DIGIPIN | `encode(lat, lon, precision=10)` |
-| **Decoding** | DIGIPIN → Coordinates | `decode(code)` |
-| **Validation** | Check code validity | `is_valid(code)` |
-| **Batch Operations** | Process arrays efficiently | `batch_encode()`, `batch_decode()` |
-| **Proximity Search** | Find neighboring cells | `get_neighbors()`, `get_ring()`, `get_disk()` |
-| **Hierarchical Ops** | Parent/child relationships | `get_parent()`, `is_within()` |
-| **Bounds Calculation** | Get cell boundaries | `get_bounds(code)` |
-| **Pandas Integration** | DataFrame operations | `.digipin.encode()`, `.digipin.decode()` |
-| **Django Integration** | Database field with validation | `DigipinField()`, `__within` lookup |
-| **FastAPI Integration** | REST API microservice | Pre-built router with Pydantic models |
-| **Polyfill** | Polygon to codes conversion | `polyfill(polygon, precision)` |
+### 🔌 Integrations
+- [Pandas Integration](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/integrations-pandas.md) - DataFrame operations
+- [Django Integration](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/integrations-django.md) - Database field with validation
+- [FastAPI Integration](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/integrations-fastapi.md) - REST API microservices
+- [Geospatial Polyfill](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/geospatial-polyfill.md) - Polygon-to-codes conversion
 
-### Performance Characteristics
-
-- ⚡ **Fast**: ~50,000 encodes/second on modern hardware
-- 💾 **Memory Efficient**: Stateless operations, minimal footprint
-- 🔀 **Thread Safe**: All functions are immutable
-- 📦 **Zero Dependencies**: Pure Python implementation
+### 🛠️ Development
+- [Contributing Guide](CONTRIBUTING.md) - How to contribute
+- [Changelog](CHANGELOG.md) - Version history
+- [Technical Specification](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/technical_spec.md) - Official DIGIPIN spec
 
 ---
 
-## 📜 Official Specification
+## Features at a Glance
 
-This library implements the standard defined by:
-
-> **Department of Posts, Ministry of Communications, Government of India**
-> *"Digital Postal Index Number (DIGIPIN) - Technical Document, Final Version"*
-> **March 2025**
-
-**Specification Compliance:** 100% ✅
-
-### Technical Details
-
-- **Coverage Area**:
-  - Latitude: 2.5°N to 38.5°N
-  - Longitude: 63.5°E to 99.5°E
-  - Includes full Indian territory and maritime EEZ
-
-- **Grid System**:
-  - 10-level hierarchical structure
-  - 4×4 subdivision at each level
-  - Spiral anticlockwise labeling pattern
-
-- **Character Set**: `23456789CFJKLMPT` (16 symbols)
-  - Excludes confusing characters: 0, 1, A, B, D, E, G, H, I, N, O, Q, R, S, U, V, W, X, Y, Z
+| Feature | Description |
+|---------|-------------|
+| **Encoding/Decoding** | Coordinates ↔ DIGIPIN codes |
+| **Validation** | Check code validity with `is_valid()` |
+| **Batch Operations** | Process arrays efficiently |
+| **Proximity Search** | Find neighbors, rings, disks |
+| **Hierarchical Ops** | Parent/child relationships |
+| **Pandas Integration** | `.digipin` accessor for DataFrames |
+| **Django Integration** | `DigipinField()` with auto-validation |
+| **FastAPI Integration** | Pre-built REST API router |
+| **Geospatial Polyfill** | Convert polygons to code sets |
 
 ---
 
-## 📚 Documentation
+## Project Status
 
-- **[Complete API Reference](https://github.com/DEADSERPENT/digipinpy/blob/main/DOCUMENTATION.md)** - Detailed function documentation
-- **[Documentation Index](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/index.md)** - Full documentation hub
-- **[Technical Specification](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/technical_spec.md)** - Official DIGIPIN spec
-- **[Changelog](https://github.com/DEADSERPENT/digipinpy/blob/main/CHANGELOG.md)** - Version history and updates
-- **[Contributing Guide](https://github.com/DEADSERPENT/digipinpy/blob/main/CONTRIBUTING.md)** - How to contribute
-
----
-
-## 🎓 Use Cases
-
-### 🚚 Logistics & Delivery
-
-```python
-# Optimize delivery routes with precise location codes
-from digipin import encode, get_disk
-
-delivery_hub = encode(28.622788, 77.213033)
-delivery_zone = get_disk(delivery_hub, radius=5)
-print(f"Delivery zone covers {len(delivery_zone)} cells")
-```
-
-### 🚨 Emergency Services
-
-```python
-# Locate incident and surrounding areas for emergency response
-from digipin import encode, get_neighbors
-
-incident_location = encode(19.076090, 72.877426)
-response_area = get_neighbors(incident_location)
-```
-
-### 🏙️ Urban Planning
-
-```python
-# Analyze geographic coverage and density
-from digipin import get_parent, is_within
-
-building_code = '39J49LL8T4'
-district_code = get_parent(building_code, level=5)
-
-# Check if location is within district
-is_within(building_code, district_code)  # True
-```
-
-### 📊 Data Analysis
-
-```python
-# Aggregate location data by regions
-import pandas as pd
-import digipin.pandas_ext
-
-df = pd.read_csv('locations.csv')
-df['digipin'] = df.digipin.encode('latitude', 'longitude')
-df['district'] = df['digipin'].str[:5]  # First 5 chars = district level
-
-# Analyze by district
-district_stats = df.groupby('district').agg({'value': 'sum'})
-```
+- ✅ **Production Ready** - Version 1.4.1
+- ✅ **100% Spec Compliant** - Official DoP specification
+- ✅ **163 Tests Passing** - Comprehensive test coverage
+- ✅ **Type Hints** - Full type annotation support
+- ✅ **Multi-Platform** - Windows, macOS, Linux
+- ✅ **Python 3.8-3.13** - Wide version support
 
 ---
 
-## 🧪 Testing
-
-```bash
-# Run all tests
-pytest tests/ -v
-
-# Run with coverage report
-pytest tests/ --cov=src/digipin --cov-report=html
-
-# Run specific test file
-pytest tests/test_encoder.py -v
-```
-
-**Test Coverage:** 163 comprehensive test cases covering:
-- Core DIGIPIN package (29 tests)
-- Neighbor discovery (29 tests)
-- Pandas integration (33 tests)
-- Django integration (31 tests)
-- FastAPI integration (41 tests) - NEW in v1.3.0
-
----
-
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-### Development Setup
+**Quick setup:**
 
 ```bash
-# Clone the repository
 git clone https://github.com/DEADSERPENT/digipinpy.git
 cd digipinpy
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install in development mode
 pip install -e ".[dev]"
-
-# Run tests
 pytest tests/ -v
-
-# Format code
-black src/digipin tests/
-
-# Type checking
-mypy src/digipin
 ```
 
 ---
 
-## 📊 Project Status
-
-- ✅ **Production Ready**: Version 1.4.0
-- ✅ **100% Specification Compliant**
-- ✅ **163 Tests Passing** (100% coverage)
-- ✅ **Framework Integrations**: Pandas, Django, FastAPI & Geospatial
-- ✅ **Type Hints**: Full type annotation support
-- ✅ **Zero Dependencies**: Pure Python core
-- ✅ **Multi-Platform**: Windows, macOS, Linux
-- ✅ **CI/CD**: Automated testing on Python 3.8-3.13
-
----
-
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👥 Authors & Maintainers
+## Authors & Acknowledgments
 
 **Lead Developer:** SAMARTHA H V
 **Maintainer:** MR SHIVAKUMAR
 
 📧 Contact: samarthsmg14@gmail.com, hmrshivu@gmail.com
 
----
-
-## 🙏 Acknowledgments
-
-This implementation is based on the official DIGIPIN specification published by:
-
-- **Department of Posts**
-- **Ministry of Communications**
-- **Government of India**
-
-We acknowledge the technical document "Digital Postal Index Number (DIGIPIN) - Technical Document, Final Version, March 2025" as the authoritative specification.
+This implementation is based on the official DIGIPIN specification published by the **Department of Posts, Ministry of Communications, Government of India** (March 2025).
 
 ---
 
-## 🔗 Links
+## Links
 
-- **PyPI**: https://pypi.org/project/digipinpy/
-- **GitHub**: https://github.com/DEADSERPENT/digipinpy
-- **Issue Tracker**: https://github.com/DEADSERPENT/digipinpy/issues
-- **Discussions**: https://github.com/DEADSERPENT/digipinpy/discussions
-
----
-
-## 📈 Stats
-
-![PyPI - Downloads](https://img.shields.io/pypi/dm/digipinpy?label=Downloads%2FMonth)
-![GitHub Repo stars](https://img.shields.io/github/stars/DEADSERPENT/digipinpy?style=social)
-![GitHub forks](https://img.shields.io/github/forks/DEADSERPENT/digipinpy?style=social)
+- **PyPI:** https://pypi.org/project/digipinpy/
+- **GitHub:** https://github.com/DEADSERPENT/digipinpy
+- **Issue Tracker:** https://github.com/DEADSERPENT/digipinpy/issues
+- **Discussions:** https://github.com/DEADSERPENT/digipinpy/discussions
 
 ---
 
 <div align="center">
 
 **Government of India | Department of Posts | National Addressing Initiative**
-
-Made with ❤️ for India's Digital Future
 
 </div>
