@@ -63,7 +63,7 @@ FastAPI Integration (Optional):
         app.include_router(digipin_router, prefix="/api/v1")
 """
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
@@ -100,6 +100,14 @@ from .utils import (
     DIGIPIN_LEVELS,
 )
 
+# Geospatial functions (optional - requires shapely)
+try:
+    from .polyfill import polyfill, get_polygon_boundary
+except ImportError:
+    # Allow import of package even if shapely is missing
+    polyfill = None  # type: ignore
+    get_polygon_boundary = None  # type: ignore
+
 # Public API
 __all__ = [
     # Core functions
@@ -121,6 +129,9 @@ __all__ = [
     "get_disk",
     "get_surrounding_cells",
     "expand_search_area",
+    # Geospatial operations (NEW in v1.4.0)
+    "polyfill",
+    "get_polygon_boundary",
     # Utilities
     "is_valid_coordinate",
     "get_precision_info",

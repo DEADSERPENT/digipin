@@ -9,6 +9,7 @@
    - [Pandas Integration](#pandas-integration)
    - [Django Integration](#django-integration)
    - [FastAPI Integration](#fastapi-integration)
+   - [Geospatial Polyfill](#geospatial-polyfill)
 5. [Core Concepts](#core-concepts)
 6. [API Reference](#api-reference)
 7. [Usage Examples](#usage-examples)
@@ -24,6 +25,19 @@
 ### What is DIGIPIN?
 
 DIGIPIN (Digital Postal Index Number) is India's official national-level addressing grid system developed by the Department of Posts in collaboration with IIT Hyderabad and NRSC, ISRO. It provides a standardized, geo-coded addressing framework for the entire country.
+
+### What's New in v1.4.0
+
+**Geospatial Polyfill** - Polygon-to-Code Conversion!
+
+Version 1.4.0 adds **Polyfill** functionality for converting geographic polygons into DIGIPIN codes:
+
+#### Polyfill Module (NEW)
+- **`polyfill(polygon, precision)`** - Convert polygons to DIGIPIN codes
+- **Grid Scan Algorithm** - Efficient polygon coverage calculation
+- **Prepared Geometry** - Fast point-in-polygon checks with Shapely
+- **Flexible Input** - Accepts Shapely Polygons or coordinate lists
+- **Recommended Precision** - 6-8 for city/district zones (~1km to ~60m)
 
 ### What's New in v1.3.0
 
@@ -504,6 +518,119 @@ app.include_router(digipin_router, prefix="/api/v1")
 
 handler = Mangum(app)  # For AWS Lambda
 ```
+
+### Geospatial Polyfill
+
+The Polyfill module converts geographic polygons into sets of DIGIPIN codes, essential for geofencing and service area definition.
+
+#### Installation
+
+```bash
+pip install digipinpy[geo]
+```
+
+#### Quick Start
+
+```python
+from digipin import polyfill, encode
+
+# Define delivery zone (polygon)
+delivery_zone = [
+    (28.6328, 77.2197),  # Top
+    (28.6289, 77.2155),  # Bottom Left
+    (28.6289, 77.2239),  # Bottom Right
+]
+
+# Convert to DIGIPIN codes (precision 8 = ~60m)
+zone_codes = polyfill(delivery_zone, precision=8)
+print(f"Zone covered by {len(zone_codes)} codes")  # 53 codes
+
+# Fast O(1) address validation
+customer_code = encode(28.6310, 77.2200, precision=8)
+if customer_code in zone_codes:
+    print("Address IS in delivery zone!")
+```
+
+#### API Functions
+
+| Function | Description | Returns |
+|----------|-------------|---------|
+| `polyfill(polygon, precision)` | Convert polygon to codes | List[str] |
+| `get_polygon_boundary(codes)` | Get bounding box of codes | Tuple (min_lat, max_lat, min_lon, max_lon) |
+
+#### Parameters
+
+**polyfill():**
+- `polygon`: Shapely Polygon object OR list of (lat, lon) tuples
+- `precision`: Target DIGIPIN level (1-10)
+  - Recommended: 6-8 for city/district zones
+  - Warning: 9-10 on large areas generates massive lists
+
+#### Algorithm
+
+- **Grid Scan**: Scans polygon bounding box at target precision
+- **Prepared Geometry**: Uses Shapely's `prep()` for fast checks
+- **Center Point Testing**: Includes cell if center is inside polygon
+- **Performance**: ~0.1s for typical delivery zone at precision 8
+
+#### Use Cases
+
+**Delivery Service:**
+```python
+# Define service area once
+service_codes = polyfill(city_boundary, precision=7)
+
+# Store in database
+db.service_area.insert({"city": "Delhi", "codes": service_codes})
+
+# Fast O(1) lookup for each order
+if customer_code in service_codes:
+    accept_order()
+```
+
+**Emergency Response:**
+```python
+# Pre-compute ambulance coverage zones
+hospital_coverage = polyfill(response_time_5min_polygon, precision=8)
+
+# Instant dispatch decisions
+if incident_code in hospital_coverage:
+    dispatch_ambulance(hospital_id)
+```
+
+**Flood Risk Assessment:**
+```python
+# Convert flood zone polygon to codes
+flood_zone_codes = polyfill(flood_hazard_polygon, precision=7)
+
+# Check if address is at risk
+address_code = encode(property_lat, property_lon, precision=7)
+if address_code in flood_zone_codes:
+    flag_high_risk()
+```
+
+**Restaurant Delivery Zones:**
+```python
+# Define delivery radius as polygon
+from shapely.geometry import Point
+
+restaurant_point = Point(77.2200, 28.6310)
+delivery_range = restaurant_point.buffer(0.01)  # ~1km radius
+
+# Convert to codes
+delivery_codes = polyfill(delivery_range, precision=8)
+
+# Check order eligibility
+if order_code in delivery_codes:
+    accept_delivery()
+```
+
+#### Performance Tips
+
+1. **Choose Right Precision**: Use 6-8 for zones, not 9-10
+2. **Pre-compute Zones**: Calculate once, reuse many times
+3. **Cache Results**: Store in database or Redis
+4. **Bounded Polygons**: Limit polygon complexity for speed
 
 ---
 

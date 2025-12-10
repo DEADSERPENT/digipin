@@ -32,8 +32,14 @@ pip install digipinpy[pandas]
 # With Django integration (NEW in v1.2.0)
 pip install digipinpy[django]
 
-# With both Pandas and Django
-pip install digipinpy[pandas,django]
+# With FastAPI integration (NEW in v1.3.0)
+pip install digipinpy[fastapi]
+
+# With geospatial polyfill (NEW in v1.4.0)
+pip install digipinpy[geo]
+
+# Complete ecosystem (all integrations)
+pip install digipinpy[pandas,django,fastapi,geo]
 ```
 
 ## Quick Start

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "digipinpy"
-version = "1.3.0"
+version = "1.4.0"
 description = "Official Python implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -77,6 +77,9 @@ fastapi = [
     "fastapi>=0.68.0",
     "pydantic>=1.8.0",
     "uvicorn>=0.15.0",
+]
+geo = [
+    "shapely>=2.0.0",
 ]
 
 [project.urls]

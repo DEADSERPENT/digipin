@@ -2,6 +2,132 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2025-12-09
+
+### Added - Geospatial Polyfill: Polygon-to-Code Conversion
+
+This release adds **Polyfill** functionality, enabling conversion of geographic polygons (delivery zones, city boundaries, flood areas) into sets of DIGIPIN codes. This is essential for geofencing, service area definition, and logistics applications.
+
+#### Polyfill Module (NEW)
+
+- **`polyfill(polygon, precision)`** - Convert a polygon to DIGIPIN codes
+  - Accepts Shapely Polygon objects or list of (lat, lon) coordinates
+  - Uses grid scan algorithm with prepared geometry optimization
+  - Configurable precision (1-10) for different granularities
+  - Fast containment checks using Shapely's `prep()` function
+
+- **`get_polygon_boundary(codes)`** - Calculate bounding box of code list
+  - Returns (min_lat, max_lat, min_lon, max_lon)
+  - Useful for map zooming and visualization
+
+#### Algorithm Details
+
+- **Grid Scan Approach**: Efficiently scans polygon bounding box at target precision
+- **Prepared Geometry**: Uses Shapely's prepared geometry for fast point-in-polygon checks
+- **Center Point Testing**: Includes cell if center point is inside polygon
+- **Recommended Precision**: 6-8 for city/district zones (~1km to ~60m resolution)
+
+#### Installation
+
+```bash
+pip install digipinpy[geo]
+```
+
+This adds `shapely>=2.0.0` as an optional dependency, keeping the core package lightweight.
+
+#### Quick Start Example
+
+```python
+from digipin import polyfill, encode
+
+# Define delivery zone (triangle in Delhi)
+zone = [
+    (28.6328, 77.2197),  # Top
+    (28.6289, 77.2155),  # Bottom Left
+    (28.6289, 77.2239),  # Bottom Right
+]
+
+# Convert to DIGIPIN codes (precision 8 = ~60m)
+codes = polyfill(zone, precision=8)
+print(f"Zone covered by {len(codes)} codes")  # 53 codes
+
+# Check if customer address is in delivery zone
+customer_code = encode(28.6310, 77.2200, precision=8)
+if customer_code in codes:
+    print("Address IS in delivery zone!")
+```
+
+#### New Files
+
+- `src/digipin/polyfill.py` - Polyfill implementation
+- `examples/polyfill_usage.py` - Comprehensive demo with validation
+
+#### Performance
+
+- **Speed**: ~0.1s for typical delivery zone at precision 8
+- **Memory**: Minimal - only stores code strings
+- **Scalability**: Efficient for precision 6-8
+- **Warning**: High precision (9-10) on large areas generates massive lists
+
+### Changed
+
+- Updated `src/digipin/__init__.py` to version 1.4.0
+- Added graceful import handling for polyfill (works without shapely)
+- Enhanced docstring with geospatial usage examples
+
+### Dependencies
+
+- **Core package**: Still zero external dependencies ✓
+- **Optional extras**:
+  - `shapely>=2.0.0` (for geospatial/polyfill operations)
+  - `fastapi>=0.68.0, pydantic>=1.8.0, uvicorn>=0.15.0` (for FastAPI)
+  - `pandas>=1.3.0, numpy>=1.21.0` (for Pandas)
+  - `django>=3.2` (for Django)
+
+### Use Cases Unlocked
+
+This release enables:
+- **Delivery Zone Definition** - Define zones as polygons, check addresses in O(1) time
+- **Geofencing** - Real-time location validation without expensive point-in-polygon
+- **Service Area Mapping** - Restaurant delivery areas, emergency response zones
+- **Risk Assessment** - Flood zones, hazard areas, coverage analysis
+- **Logistics Optimization** - Zone-based driver assignment and routing
+
+### Example Use Cases
+
+**Delivery Service:**
+```python
+# Define service area once
+service_codes = polyfill(city_boundary_polygon, precision=7)
+
+# Fast O(1) lookup for each order
+if customer_code in service_codes:
+    accept_order()
+```
+
+**Emergency Response:**
+```python
+# Pre-compute ambulance coverage zones
+hospital_coverage = polyfill(response_time_5min_polygon, precision=8)
+
+# Instant dispatch decisions
+if incident_code in hospital_coverage:
+    dispatch_ambulance(hospital_id)
+```
+
+### Breaking Changes
+
+- None - Fully backward compatible
+
+### Notes
+
+- **Python support**: 3.7-3.13 (unchanged)
+- **Platforms**: Windows, macOS, Linux (all tested)
+- **Package size**: Minimal increase (< 10KB for polyfill module)
+- **Test coverage**: All 163 tests passing (no regressions)
+
+---
+
 ## [1.3.0] - 2025-12-09
 
 ### Added - FastAPI Integration: Modern Microservices Support

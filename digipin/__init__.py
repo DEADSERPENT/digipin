@@ -51,9 +51,19 @@ Django Integration (Optional):
         from digipin.django_ext import DigipinField
         class MyModel(models.Model):
             code = DigipinField()
+
+FastAPI Integration (Optional):
+    For high-performance APIs and microservices:
+        pip install digipinpy[fastapi]
+
+    Then mount the pre-built router:
+        from fastapi import FastAPI
+        from digipin.fastapi_ext import router as digipin_router
+        app = FastAPI()
+        app.include_router(digipin_router, prefix="/api/v1")
 """
 
-__version__ = "1.2.0"
+__version__ = "1.4.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
@@ -90,37 +100,43 @@ from .utils import (
     DIGIPIN_LEVELS,
 )
 
+# Geospatial functions (optional - requires shapely)
+try:
+    from .polyfill import polyfill, get_polygon_boundary
+except ImportError:
+    # Allow import of package even if shapely is missing
+    polyfill = None  # type: ignore
+    get_polygon_boundary = None  # type: ignore
+
 # Public API
 __all__ = [
     # Core functions
     "encode",
     "decode",
     "is_valid",
-
     # Batch operations
     "batch_encode",
     "batch_decode",
-
     # Hierarchical operations
     "get_bounds",
     "encode_with_bounds",
     "decode_with_bounds",
     "get_parent",
     "is_within",
-
     # Neighbor discovery (NEW in v1.1.0)
     "get_neighbors",
     "get_ring",
     "get_disk",
     "get_surrounding_cells",
     "expand_search_area",
-
+    # Geospatial operations (NEW in v1.4.0)
+    "polyfill",
+    "get_polygon_boundary",
     # Utilities
     "is_valid_coordinate",
     "get_precision_info",
     "get_grid_size",
     "get_approx_distance",
-
     # Constants
     "LAT_MIN",
     "LAT_MAX",
@@ -128,7 +144,6 @@ __all__ = [
     "LON_MAX",
     "DIGIPIN_ALPHABET",
     "DIGIPIN_LEVELS",
-
     # Metadata
     "__version__",
     "__author__",

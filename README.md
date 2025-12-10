@@ -59,8 +59,11 @@ pip install digipinpy[django]
 # For FastAPI microservices (NEW in v1.3.0)
 pip install digipinpy[fastapi]
 
-# For complete ecosystem (pandas + django + fastapi)
-pip install digipinpy[pandas,django,fastapi]
+# For geospatial operations - Polyfill (NEW in v1.4.0)
+pip install digipinpy[geo]
+
+# For complete ecosystem (pandas + django + fastapi + geo)
+pip install digipinpy[pandas,django,fastapi,geo]
 
 # For development (testing, linting, type checking)
 pip install digipinpy[dev]
@@ -205,6 +208,28 @@ app.include_router(digipin_router, prefix="/api/v1")
 # GET    /api/v1/neighbors/{code} - Get neighboring cells
 ```
 
+### Geospatial Polyfill (New in v1.4.0)
+
+```python
+from digipin import polyfill, encode
+
+# Define delivery zone as polygon
+delivery_zone = [
+    (28.6328, 77.2197),  # Top
+    (28.6289, 77.2155),  # Bottom Left
+    (28.6289, 77.2239),  # Bottom Right
+]
+
+# Convert polygon to DIGIPIN codes (precision 8 = ~60m)
+zone_codes = polyfill(delivery_zone, precision=8)
+print(f"Zone covered by {len(zone_codes)} codes")
+
+# Fast O(1) address validation
+customer_code = encode(28.6310, 77.2200, precision=8)
+if customer_code in zone_codes:
+    print("Address IS in delivery zone!")
+```
+
 ---
 
 ## ✨ Features
@@ -223,6 +248,7 @@ app.include_router(digipin_router, prefix="/api/v1")
 | **Pandas Integration** | DataFrame operations | `.digipin.encode()`, `.digipin.decode()` |
 | **Django Integration** | Database field with validation | `DigipinField()`, `__within` lookup |
 | **FastAPI Integration** | REST API microservice | Pre-built router with Pydantic models |
+| **Polyfill** | Polygon to codes conversion | `polyfill(polygon, precision)` |
 
 ### Performance Characteristics
 
@@ -377,10 +403,10 @@ mypy src/digipin
 
 ## 📊 Project Status
 
-- ✅ **Production Ready**: Version 1.3.0
+- ✅ **Production Ready**: Version 1.4.0
 - ✅ **100% Specification Compliant**
 - ✅ **163 Tests Passing** (100% coverage)
-- ✅ **Framework Integrations**: Pandas, Django & FastAPI
+- ✅ **Framework Integrations**: Pandas, Django, FastAPI & Geospatial
 - ✅ **Type Hints**: Full type annotation support
 - ✅ **Zero Dependencies**: Pure Python core
 - ✅ **Multi-Platform**: Windows, macOS, Linux
