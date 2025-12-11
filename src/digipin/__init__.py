@@ -61,9 +61,18 @@ FastAPI Integration (Optional):
         from digipin.fastapi_ext import router as digipin_router
         app = FastAPI()
         app.include_router(digipin_router, prefix="/api/v1")
+
+Visualization (Optional):
+    For interactive map visualization:
+        pip install digipinpy[viz]
+
+    Then visualize DIGIPIN codes:
+        from digipin.viz import plot_pins
+        m = plot_pins(['39J49LL8T4', '39J49LL8T5'])
+        m.save('map.html')
 """
 
-__version__ = "1.4.2"
+__version__ = "1.5.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
@@ -108,6 +117,15 @@ except ImportError:
     polyfill = None  # type: ignore
     get_polygon_boundary = None  # type: ignore
 
+# Visualization functions (optional - requires folium)
+try:
+    from .viz import plot_pins, plot_coverage, plot_neighbors
+except ImportError:
+    # Allow import of package even if folium is missing
+    plot_pins = None  # type: ignore
+    plot_coverage = None  # type: ignore
+    plot_neighbors = None  # type: ignore
+
 # Public API
 __all__ = [
     # Core functions
@@ -132,6 +150,10 @@ __all__ = [
     # Geospatial operations (NEW in v1.4.0)
     "polyfill",
     "get_polygon_boundary",
+    # Visualization (NEW in v1.5.0)
+    "plot_pins",
+    "plot_coverage",
+    "plot_neighbors",
     # Utilities
     "is_valid_coordinate",
     "get_precision_info",
