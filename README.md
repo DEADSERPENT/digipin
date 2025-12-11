@@ -34,6 +34,8 @@
 - 📦 **Zero Dependencies** - Pure Python core, optional framework integrations
 - ⚡ **High Performance** - ~50,000 encodes/second
 - 🔌 **Framework Ready** - Native Pandas, Django, FastAPI & geospatial support
+- 📊 **CSV Batch Processing** - CLI tool for processing thousands of addresses
+- 🗺️ **Interactive Visualization** - Beautiful maps with Folium integration
 
 ---
 
@@ -46,10 +48,11 @@ pip install digipinpy
 **Optional integrations:**
 
 ```bash
-pip install digipinpy[pandas]    # Data science with Pandas
+pip install digipinpy[pandas]    # Data science & CSV processing
 pip install digipinpy[django]    # Django database field
 pip install digipinpy[fastapi]   # FastAPI microservices
 pip install digipinpy[geo]       # Geospatial polyfill
+pip install digipinpy[viz]       # Interactive map visualization
 ```
 
 ---
@@ -122,6 +125,8 @@ search_area = get_disk('39J49LL8T4', radius=3)
 | **Batch Operations** | Process arrays efficiently |
 | **Proximity Search** | Find neighbors, rings, disks |
 | **Hierarchical Ops** | Parent/child relationships |
+| **CSV Batch Processing** | `digipin convert` CLI for CSV/Excel files |
+| **Interactive Visualization** | `plot_pins()`, `plot_coverage()` with Folium |
 | **Pandas Integration** | `.digipin` accessor for DataFrames |
 | **Django Integration** | `DigipinField()` with auto-validation |
 | **FastAPI Integration** | Pre-built REST API router |
@@ -131,12 +136,12 @@ search_area = get_disk('39J49LL8T4', radius=3)
 
 ## Project Status
 
-- ✅ **Production Ready** - Version 1.4.2
+- ✅ **Production Ready** - Version 1.5.0
 - ✅ **100% Spec Compliant** - Official DoP specification
-- ✅ **163 Tests Passing** - Comprehensive test coverage
+- ✅ **209 Tests Passing** - Comprehensive test coverage
 - ✅ **Type Hints** - Full type annotation support
 - ✅ **Multi-Platform** - Windows, macOS, Linux
-- ✅ **Python 3.8-3.13** - Wide version support
+- ✅ **Python 3.7-3.13** - Wide version support
 
 ---
 
@@ -161,23 +166,14 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-## Authors & Acknowledgments
+## Community & Support
 
-**Lead Developer:** SAMARTHA H V
-**Maintainer:** MR SHIVAKUMAR
+**Maintained by:** SAMARTHA H V • MR SHIVAKUMAR
+📧 samarthsmg14@gmail.com • hmrshivu@gmail.com
 
-📧 Contact: samarthsmg14@gmail.com, hmrshivu@gmail.com
+[📦 PyPI](https://pypi.org/project/digipinpy/) • [🐛 Issues](https://github.com/DEADSERPENT/digipinpy/issues) • [💬 Discussions](https://github.com/DEADSERPENT/digipinpy/discussions) • [📖 Changelog](CHANGELOG.md)
 
 This implementation is based on the official DIGIPIN specification published by the **Department of Posts, Ministry of Communications, Government of India** (March 2025).
-
----
-
-## Links
-
-- **PyPI:** https://pypi.org/project/digipinpy/
-- **GitHub:** https://github.com/DEADSERPENT/digipinpy
-- **Issue Tracker:** https://github.com/DEADSERPENT/digipinpy/issues
-- **Discussions:** https://github.com/DEADSERPENT/digipinpy/discussions
 
 ---
 

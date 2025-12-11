@@ -38,8 +38,11 @@ pip install digipinpy[fastapi]
 # With geospatial polyfill (NEW in v1.4.0)
 pip install digipinpy[geo]
 
+# With interactive visualization (NEW in v1.5.0)
+pip install digipinpy[viz]
+
 # Complete ecosystem (all integrations)
-pip install digipinpy[pandas,django,fastapi,geo]
+pip install digipinpy[pandas,django,fastapi,geo,viz]
 ```
 
 ## Quick Start
@@ -144,6 +147,41 @@ search_area = get_ring(incident, distance=1)
 # Analyze coverage of a region
 region = '39J49L'  # ~1km grid
 child_cells = [region + c for c in DIGIPIN_ALPHABET[:16]]
+```
+
+### CSV Batch Processing (NEW in v1.5.0)
+
+```bash
+# Process CSV/Excel files from command line
+digipin convert addresses.csv
+
+# With custom columns and output
+digipin convert data.csv --lat-col latitude --lon-col longitude -o output.csv
+
+# With validation and custom precision
+digipin convert data.csv -p 8 --validate
+```
+
+### Interactive Visualization (NEW in v1.5.0)
+
+```python
+from digipin import encode
+from digipin.viz import plot_pins, plot_coverage, plot_neighbors
+
+# Visualize single or multiple codes
+codes = ['39J49LL8T4', '39J49LL8T5']
+m = plot_pins(codes, color_by_precision=True)
+m.save('map.html')
+
+# Create coverage map
+from digipin import polyfill
+zone_codes = polyfill(polygon, precision=8)
+m = plot_coverage(zone_codes, title="Delivery Zone")
+m.save('coverage.html')
+
+# Visualize neighbors
+m = plot_neighbors('39J49LL8T4', radius=2)
+m.save('neighbors.html')
 ```
 
 ### Data Science with Pandas (NEW in v1.2.0)

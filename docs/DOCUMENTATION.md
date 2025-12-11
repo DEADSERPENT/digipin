@@ -21,6 +21,28 @@
 
 DIGIPIN (Digital Postal Index Number) is India's official national-level addressing grid system developed by the Department of Posts in collaboration with IIT Hyderabad and NRSC, ISRO. It provides a standardized, geo-coded addressing framework for the entire country.
 
+### What's New in v1.5.0
+
+**CSV Batch Processing & Interactive Visualization** - Non-Programmer Friendly!
+
+Version 1.5.0 adds two game-changing features that make DIGIPIN accessible to everyone:
+
+#### CSV Batch Processing (NEW)
+- **`digipin convert` CLI** - Process thousands of addresses from CSV/Excel files
+- **Auto-column Detection** - Automatically finds lat/lon columns
+- **Excel Support** - Works with .xlsx and .xls files
+- **Progress Bars** - Visual feedback with tqdm
+- **Data Validation** - Built-in validation with `--validate` flag
+- **Custom Precision** - Variable precision levels (1-10)
+
+#### Interactive Visualization (NEW)
+- **`plot_pins()`** - Visualize DIGIPIN codes on interactive Folium maps
+- **`plot_coverage()`** - Create coverage maps for zones/areas
+- **`plot_neighbors()`** - Visualize neighbor relationships
+- **Color-Coding** - Beautiful color palettes by precision level
+- **Marker Clustering** - Handle 1000+ codes efficiently
+- **Export to HTML** - Standalone interactive map files
+
 ### What's New in v1.1.0
 
 **Neighbor Discovery** - The most requested feature is now available!
@@ -1138,6 +1160,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-**Last Updated**: January 2025
-**Version**: 1.1.0
+**Last Updated**: December 2025
+**Version**: 1.5.0
 **Maintained by**: SAMARTHA H V & MR SHIVAKUMAR

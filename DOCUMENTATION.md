@@ -26,6 +26,28 @@
 
 DIGIPIN (Digital Postal Index Number) is India's official national-level addressing grid system developed by the Department of Posts in collaboration with IIT Hyderabad and NRSC, ISRO. It provides a standardized, geo-coded addressing framework for the entire country.
 
+### What's New in v1.5.0
+
+**CSV Batch Processing & Interactive Visualization** - Non-Programmer Friendly!
+
+Version 1.5.0 adds two game-changing features that make DIGIPIN accessible to everyone:
+
+#### CSV Batch Processing (NEW)
+- **`digipin convert` CLI** - Process thousands of addresses from CSV/Excel files
+- **Auto-column Detection** - Automatically finds lat/lon columns
+- **Excel Support** - Works with .xlsx and .xls files
+- **Progress Bars** - Visual feedback with tqdm
+- **Data Validation** - Built-in validation with `--validate` flag
+- **Custom Precision** - Variable precision levels (1-10)
+
+#### Interactive Visualization (NEW)
+- **`plot_pins()`** - Visualize DIGIPIN codes on interactive Folium maps
+- **`plot_coverage()`** - Create coverage maps for zones/areas
+- **`plot_neighbors()`** - Visualize neighbor relationships
+- **Color-Coding** - Beautiful color palettes by precision level
+- **Marker Clustering** - Handle 1000+ codes efficiently
+- **Export to HTML** - Standalone interactive map files
+
 ### What's New in v1.4.0
 
 **Geospatial Polyfill** - Polygon-to-Code Conversion!
@@ -115,14 +137,23 @@ See the [Framework Integrations](#framework-integrations) section for complete g
 # Core package (zero dependencies)
 pip install digipinpy
 
-# With Pandas integration
+# With CSV batch processing & Pandas integration
 pip install digipinpy[pandas]
 
 # With Django integration
 pip install digipinpy[django]
 
-# With both Pandas and Django
-pip install digipinpy[pandas,django]
+# With FastAPI integration
+pip install digipinpy[fastapi]
+
+# With geospatial polyfill
+pip install digipinpy[geo]
+
+# With interactive visualization
+pip install digipinpy[viz]
+
+# Complete ecosystem (all integrations)
+pip install digipinpy[pandas,django,fastapi,geo,viz]
 ```
 
 ### Install from Source
@@ -631,6 +662,183 @@ if order_code in delivery_codes:
 2. **Pre-compute Zones**: Calculate once, reuse many times
 3. **Cache Results**: Store in database or Redis
 4. **Bounded Polygons**: Limit polygon complexity for speed
+
+### CSV Batch Processing
+
+The CSV batch processing feature provides a command-line interface for converting large CSV/Excel files containing coordinates into DIGIPIN codes.
+
+#### Installation
+
+```bash
+pip install digipinpy[pandas]
+```
+
+#### Quick Start
+
+```bash
+# Basic conversion (auto-detect lat/lon columns)
+digipin convert addresses.csv
+
+# Explicit columns and custom output
+digipin convert warehouses.csv --lat-col latitude --lon-col longitude -o codes.csv
+
+# Custom precision and validation
+digipin convert data.csv -p 8 --validate -o output.csv --digipin-col code
+```
+
+#### CLI Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `input_file` | CSV/Excel file to process | Required |
+| `--lat-col` | Latitude column name | Auto-detect |
+| `--lon-col` | Longitude column name | Auto-detect |
+| `-o, --output` | Output file path | `{input}_with_digipin.csv` |
+| `--digipin-col` | DIGIPIN column name | `digipin` |
+| `-p, --precision` | Precision level (1-10) | 10 |
+| `--validate` | Validate all codes | False |
+
+#### Auto-Detection
+
+The CLI automatically detects latitude/longitude columns by recognizing common names:
+- **Latitude**: `lat`, `latitude`, `Lat`, `Latitude`, `LAT`
+- **Longitude**: `lon`, `lng`, `longitude`, `Longitude`, `LON`, `LNG`
+
+#### Use Cases
+
+**Logistics: Daily Order Processing**
+```bash
+# Morning: Convert overnight orders
+digipin convert overnight_orders.csv --validate -o ready_to_ship.csv
+```
+
+**Real Estate: Property Database**
+```bash
+# Process entire property database
+digipin convert properties.xlsx --lat-col prop_lat --lon-col prop_lon -o geocoded.csv
+```
+
+**Government: Address Standardization**
+```bash
+# Standardize census data
+digipin convert census_2025.csv -p 8 -o census_with_digipin.csv
+```
+
+#### Performance
+
+- **1,000 rows**: ~2 seconds
+- **10,000 rows**: ~20 seconds
+- **100,000 rows**: ~3 minutes
+- Suitable for production data pipelines
+
+### Interactive Visualization
+
+The visualization module provides interactive Folium maps for exploring DIGIPIN codes and coverage areas.
+
+#### Installation
+
+```bash
+pip install digipinpy[viz]
+```
+
+#### Quick Start
+
+```python
+from digipin import encode
+from digipin.viz import plot_pins, plot_coverage, plot_neighbors
+
+# Single location
+m = plot_pins('39J49LL8T4')
+m.save('map.html')
+
+# Multiple locations with color-coding
+codes = ['39J49LL8T4', '39J49LL8T5', '39J49LL8T6']
+m = plot_pins(codes, color_by_precision=True, show_bounds=True)
+m.save('locations.html')
+
+# Coverage area
+from digipin import polyfill
+zone_polygon = [(28.63, 77.22), (28.62, 77.21), (28.62, 77.23)]
+zone_codes = polyfill(zone_polygon, precision=8)
+m = plot_coverage(zone_codes, title="Delivery Zone")
+m.save('coverage.html')
+
+# Neighbor visualization
+m = plot_neighbors('39J49LL8T4', radius=2)
+m.save('neighbors.html')
+```
+
+#### API Functions
+
+**plot_pins(codes, ...)**
+
+Visualize DIGIPIN codes on an interactive map.
+
+Parameters:
+- `codes`: Single code (str) or list of codes
+- `map_object`: Existing Folium map (optional)
+- `color_by_precision`: Color-code by precision level (default: True)
+- `show_labels`: Show DIGIPIN code popups (default: True)
+- `show_bounds`: Draw bounding box rectangles (default: True)
+- `zoom`: Map zoom level (auto-calculated if None)
+- `tiles`: Map tile provider (default: 'OpenStreetMap')
+- `cluster`: Use marker clustering (default: False)
+- `max_clusters`: Maximum markers to render (default: 1000)
+
+**plot_coverage(codes, title, ...)**
+
+Create coverage map for delivery zones or service areas.
+
+Parameters:
+- `codes`: List of DIGIPIN codes
+- `title`: Map title (default: "DIGIPIN Coverage Map")
+- `output_file`: Save to HTML file (optional)
+- `**kwargs`: Additional arguments for plot_pins()
+
+**plot_neighbors(center_code, ...)**
+
+Visualize a DIGIPIN code and its neighbors.
+
+Parameters:
+- `center_code`: Central DIGIPIN code
+- `include_neighbors`: Show neighbors (default: True)
+- `radius`: Neighbor radius (default: 1)
+- `output_file`: Save to HTML file (optional)
+
+#### Features
+
+- **Color Palettes**: 10 precision levels from dark red to turquoise
+- **Interactive Popups**: Code details on click
+- **Bounding Boxes**: Visual grid cell boundaries
+- **Auto-Zoom**: Automatic zoom calculation
+- **Marker Clustering**: Handle 1000+ codes efficiently
+- **Standalone HTML**: Export to self-contained files
+
+#### Use Cases
+
+**Delivery Planning**
+```python
+# Visualize warehouse coverage
+warehouse = encode(28.622788, 77.213033)
+coverage = get_disk(warehouse, radius=10)
+m = plot_coverage(coverage, title="Delivery Zone", output_file="zone.html")
+```
+
+**Business Intelligence**
+```python
+# Show customer distribution
+customer_codes = [encode(lat, lon) for lat, lon in customer_locations]
+m = plot_pins(customer_codes, cluster=True)
+m.save('customers.html')
+```
+
+**Urban Planning**
+```python
+# Map service areas
+service_area_codes = polyfill(city_boundary, precision=7)
+m = plot_coverage(service_area_codes, title="Service Area")
+m.save('service_map.html')
+```
 
 ---
 
@@ -1412,7 +1620,7 @@ pytest tests/test_official_spec.py::TestOfficialSpecification::test_dak_bhawan_o
 
 ### Test Coverage
 
-**Comprehensive test suite with 122 tests covering:**
+**Comprehensive test suite with 209 tests covering:**
 
 1. **Official Specification Compliance** (29 tests)
    - Dak Bhawan official example (28.622788°N, 77.213033°E → `39J49LL8T4`)
@@ -1429,7 +1637,7 @@ pytest tests/test_official_spec.py::TestOfficialSpecification::test_dak_bhawan_o
    - Boundary edge cases
    - Multi-level neighbor queries
 
-3. **Pandas Integration** (33 tests - NEW in v1.2.0)
+3. **Pandas Integration** (33 tests - v1.2.0)
    - DataFrame encoding/decoding
    - Column validation
    - Parent code extraction
@@ -1437,7 +1645,7 @@ pytest tests/test_official_spec.py::TestOfficialSpecification::test_dak_bhawan_o
    - Error handling
    - Performance benchmarks
 
-4. **Django Integration** (31 tests - NEW in v1.2.0)
+4. **Django Integration** (31 tests - v1.2.0)
    - Model field validation
    - Auto-normalization
    - Database operations
@@ -1445,16 +1653,50 @@ pytest tests/test_official_spec.py::TestOfficialSpecification::test_dak_bhawan_o
    - Form validation
    - Migration support
 
+5. **FastAPI Integration** (41 tests - v1.3.0)
+   - Pydantic model validation
+   - Encode/decode endpoints
+   - Neighbors endpoint
+   - Response schema validation
+   - Real-world scenarios
+   - Performance benchmarks
+
+6. **Geospatial Polyfill** (tests - v1.4.0)
+   - Polygon-to-code conversion
+   - Shapely integration
+   - Boundary calculations
+   - Coverage testing
+
+7. **CSV Batch Processing** (18 tests - NEW in v1.5.0)
+   - Auto-column detection
+   - Explicit column specification
+   - Excel file support
+   - Data validation
+   - Large dataset handling
+   - Error handling
+
+8. **Interactive Visualization** (28 tests - NEW in v1.5.0)
+   - Single/multiple code plotting
+   - Color-coding by precision
+   - Marker clustering
+   - Coverage and neighbor maps
+   - Polyfill integration
+   - Error handling
+
 ### Validation Results
 
-- **Total Tests**: 122 (100% passing)
+- **Total Tests**: 209 (100% passing)
 - **Test Success Rate**: 100%
 - **Official Example**: ✓ PASS
 - **Round-trip Accuracy**: < 5m error
 - **Edge Cases**: ✓ ALL PASS
 - **Neighbor Discovery**: ✓ ALL PASS (v1.1.0)
-- **Pandas Integration**: ✓ ALL PASS (NEW in v1.2.0)
-- **Django Integration**: ✓ ALL PASS (NEW in v1.2.0)
+- **Pandas Integration**: ✓ ALL PASS (v1.2.0)
+- **Django Integration**: ✓ ALL PASS (v1.2.0)
+- **FastAPI Integration**: ✓ ALL PASS (v1.3.0)
+- **Geospatial Polyfill**: ✓ ALL PASS (v1.4.0)
+- **CSV Batch Processing**: ✓ ALL PASS (NEW in v1.5.0)
+- **Interactive Visualization**: ✓ ALL PASS (NEW in v1.5.0)
 - **Specification Compliance**: 100%
 
 ---
@@ -1648,6 +1890,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-**Last Updated**: January 2025
-**Version**: 1.1.0
+**Last Updated**: December 2025
+**Version**: 1.5.0
 **Maintained by**: SAMARTHA H V & MR SHIVAKUMAR
