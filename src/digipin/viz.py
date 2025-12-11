@@ -11,12 +11,12 @@ import warnings
 try:
     import folium
     from folium import plugins
+
     FOLIUM_AVAILABLE = True
 except ImportError:
     FOLIUM_AVAILABLE = False
     warnings.warn(
-        "Folium not available. Install with: pip install digipinpy[viz]",
-        ImportWarning
+        "Folium not available. Install with: pip install digipinpy[viz]", ImportWarning
     )
 
 from . import decode, get_bounds, is_valid
@@ -24,15 +24,15 @@ from . import decode, get_bounds, is_valid
 
 def plot_pins(
     codes: Union[str, List[str]],
-    map_object: Optional['folium.Map'] = None,
+    map_object: Optional["folium.Map"] = None,
     color_by_precision: bool = True,
     show_labels: bool = True,
     show_bounds: bool = True,
     zoom: Optional[int] = None,
-    tiles: str = 'OpenStreetMap',
+    tiles: str = "OpenStreetMap",
     cluster: bool = False,
     max_clusters: int = 1000,
-) -> 'folium.Map':
+) -> "folium.Map":
     """
     Plot DIGIPIN codes on an interactive Folium map.
 
@@ -121,23 +121,21 @@ def plot_pins(
                 zoom = 17
 
         map_object = folium.Map(
-            location=[center_lat, center_lon],
-            zoom_start=zoom,
-            tiles=tiles
+            location=[center_lat, center_lon], zoom_start=zoom, tiles=tiles
         )
 
     # Color palette by precision level
     precision_colors = {
-        1: '#8B0000',   # Dark red (country ~1000km)
-        2: '#DC143C',   # Crimson (state ~250km)
-        3: '#FF6347',   # Tomato (region ~63km)
-        4: '#FF8C00',   # Dark orange (district ~16km)
-        5: '#FFA500',   # Orange (city ~4km)
-        6: '#FFD700',   # Gold (area ~1km)
-        7: '#9ACD32',   # Yellow-green (neighborhood ~250m)
-        8: '#32CD32',   # Lime green (street ~60m)
-        9: '#00FA9A',   # Medium spring green (building ~15m)
-        10: '#00CED1',  # Dark turquoise (door ~4m)
+        1: "#8B0000",  # Dark red (country ~1000km)
+        2: "#DC143C",  # Crimson (state ~250km)
+        3: "#FF6347",  # Tomato (region ~63km)
+        4: "#FF8C00",  # Dark orange (district ~16km)
+        5: "#FFA500",  # Orange (city ~4km)
+        6: "#FFD700",  # Gold (area ~1km)
+        7: "#9ACD32",  # Yellow-green (neighborhood ~250m)
+        8: "#32CD32",  # Lime green (street ~60m)
+        9: "#00FA9A",  # Medium spring green (building ~15m)
+        10: "#00CED1",  # Dark turquoise (door ~4m)
     }
 
     # Create marker cluster if requested
@@ -151,9 +149,9 @@ def plot_pins(
 
         # Determine color
         if color_by_precision:
-            color = precision_colors.get(precision, 'blue')
+            color = precision_colors.get(precision, "blue")
         else:
-            color = 'blue'
+            color = "blue"
 
         # Create popup label
         if show_labels:
@@ -178,7 +176,7 @@ def plot_pins(
             fill=True,
             fillColor=color,
             fillOpacity=0.6,
-            weight=2
+            weight=2,
         )
 
         # Add to cluster or map
@@ -190,10 +188,7 @@ def plot_pins(
         # Add bounding box if requested
         if show_bounds:
             min_lat, max_lat, min_lon, max_lon = get_bounds(code)
-            bounds = [
-                [min_lat, min_lon],
-                [max_lat, max_lon]
-            ]
+            bounds = [[min_lat, min_lon], [max_lat, max_lon]]
 
             folium.Rectangle(
                 bounds=bounds,
@@ -201,7 +196,7 @@ def plot_pins(
                 fill=False,
                 weight=1.5,
                 opacity=0.4,
-                popup=f"Bounds: {code}" if show_labels else None
+                popup=f"Bounds: {code}" if show_labels else None,
             ).add_to(map_object)
 
     # Add cluster to map
@@ -229,8 +224,8 @@ def plot_coverage(
     codes: List[str],
     title: str = "DIGIPIN Coverage Map",
     output_file: Optional[str] = None,
-    **kwargs
-) -> 'folium.Map':
+    **kwargs,
+) -> "folium.Map":
     """
     Create a coverage map for a list of DIGIPIN codes (e.g., delivery zones).
 
@@ -265,9 +260,9 @@ def plot_coverage(
 
     # Set defaults for coverage visualization
     defaults = {
-        'show_bounds': True,
-        'cluster': len(codes) > 100,
-        'color_by_precision': False,
+        "show_bounds": True,
+        "cluster": len(codes) > 100,
+        "color_by_precision": False,
     }
     defaults.update(kwargs)
 
@@ -275,7 +270,7 @@ def plot_coverage(
     m = plot_pins(codes, **defaults)  # type: ignore[arg-type]
 
     # Add title
-    title_html = f'''
+    title_html = f"""
     <div style="position: fixed; top: 10px; left: 50px; z-index: 1000;
                 background-color: white; padding: 10px; border: 2px solid grey;
                 border-radius: 5px; font-size: 16px; font-weight: bold;">
@@ -284,7 +279,7 @@ def plot_coverage(
             {len(codes)} DIGIPIN codes
         </span>
     </div>
-    '''
+    """
     m.get_root().html.add_child(folium.Element(title_html))  # type: ignore[attr-defined]
 
     # Save if requested
@@ -300,7 +295,7 @@ def plot_neighbors(
     include_neighbors: bool = True,
     radius: int = 1,
     output_file: Optional[str] = None,
-) -> 'folium.Map':
+) -> "folium.Map":
     """
     Visualize a DIGIPIN code and its neighboring cells.
 
@@ -339,7 +334,7 @@ def plot_neighbors(
     folium.Marker(
         location=[lat, lon],
         popup=f"<b>Center:</b> {center_code}",
-        icon=folium.Icon(color='red', icon='info-sign')
+        icon=folium.Icon(color="red", icon="info-sign"),
     ).add_to(m)
 
     # Plot neighbors
@@ -350,18 +345,18 @@ def plot_neighbors(
             map_object=m,
             color_by_precision=False,
             show_bounds=True,
-            show_labels=True
+            show_labels=True,
         )
 
     # Add center bounds
     min_lat, max_lat, min_lon, max_lon = get_bounds(center_code)
     folium.Rectangle(
         bounds=[[min_lat, min_lon], [max_lat, max_lon]],
-        color='red',
+        color="red",
         fill=True,
-        fillColor='red',
+        fillColor="red",
         fillOpacity=0.2,
-        weight=3
+        weight=3,
     ).add_to(m)
 
     # Save if requested
@@ -372,4 +367,4 @@ def plot_neighbors(
     return m
 
 
-__all__ = ['plot_pins', 'plot_coverage', 'plot_neighbors']
+__all__ = ["plot_pins", "plot_coverage", "plot_neighbors"]
