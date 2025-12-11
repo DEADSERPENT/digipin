@@ -122,9 +122,9 @@ try:
     from .viz import plot_pins, plot_coverage, plot_neighbors
 except ImportError:
     # Allow import of package even if folium is missing
-    plot_pins = None  # type: ignore
-    plot_coverage = None  # type: ignore
-    plot_neighbors = None  # type: ignore
+    plot_pins = None
+    plot_coverage = None
+    plot_neighbors = None
 
 # Public API
 __all__ = [
