@@ -15,6 +15,9 @@ try:
     FOLIUM_AVAILABLE = True
 except ImportError:
     FOLIUM_AVAILABLE = False
+    # Define placeholders to satisfy type checker
+    folium = None  # type: ignore
+    plugins = None  # type: ignore
     warnings.warn(
         "Folium not available. Install with: pip install digipinpy[viz]", ImportWarning
     )

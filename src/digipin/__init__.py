@@ -72,7 +72,7 @@ Visualization (Optional):
         m.save('map.html')
 """
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
@@ -112,10 +112,12 @@ from .utils import (
 # Geospatial functions (optional - requires shapely)
 try:
     from .polyfill import polyfill, get_polygon_boundary
+    from .polyfill_quadtree import polyfill_quadtree
 except ImportError:
     # Allow import of package even if shapely is missing
     polyfill = None  # type: ignore
     get_polygon_boundary = None  # type: ignore
+    polyfill_quadtree = None  # type: ignore
 
 # Visualization functions (optional - requires folium)
 try:
@@ -149,6 +151,7 @@ __all__ = [
     "expand_search_area",
     # Geospatial operations (NEW in v1.4.0)
     "polyfill",
+    "polyfill_quadtree",
     "get_polygon_boundary",
     # Visualization (NEW in v1.5.0)
     "plot_pins",
