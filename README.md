@@ -168,7 +168,7 @@ codes = polyfill(polygon, precision=8, algorithm="grid")      # Fast for small d
 
 ## Project Status
 
-- ✅ **Production Ready** - Version 1.6.0
+- ✅ **Production Ready** - Version 1.6.1
 - ✅ **100% Spec Compliant** - Official DoP specification
 - ✅ **178 Tests Passing** - Comprehensive test coverage
 - ✅ **Type Hints** - Full type annotation support

@@ -72,7 +72,7 @@ Visualization (Optional):
         m.save('map.html')
 """
 
-__version__ = "1.6.0"
+__version__ = "1.6.1"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
