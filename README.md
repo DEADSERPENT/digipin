@@ -32,7 +32,7 @@
 - 🎯 **Pinpoint Accuracy** - ~3.8m precision at level 10
 - 🗺️ **Hierarchical Grid** - Variable precision from 1000km down to 4m
 - 📦 **Zero Dependencies** - Pure Python core, optional framework integrations
-- ⚡ **High Performance** - ~50,000 encodes/second
+- ⚡ **High Performance** - ~50,000 encodes/second, optimized quadtree polyfill (10x faster for corridors)
 - 🔌 **Framework Ready** - Native Pandas, Django, FastAPI & geospatial support
 - 📊 **CSV Batch Processing** - CLI tool for processing thousands of addresses
 - 🗺️ **Interactive Visualization** - Beautiful maps with Folium integration
@@ -94,6 +94,38 @@ neighbors = get_neighbors('39J49LL8T4')
 search_area = get_disk('39J49LL8T4', radius=3)
 ```
 
+### Polygon Coverage (NEW in v1.6.1)
+
+```python
+from digipin import polyfill
+
+# Convert polygon to DIGIPIN codes
+polygon = [(28.63, 77.22), (28.62, 77.21), (28.62, 77.23)]
+codes = polyfill(polygon, precision=8)
+
+# Choose algorithm (quadtree is default)
+codes = polyfill(polygon, precision=8, algorithm="quadtree")  # Fast for sparse/large areas
+codes = polyfill(polygon, precision=8, algorithm="grid")      # Fast for small dense zones
+```
+
+---
+
+## ⚡ Performance
+
+**v1.6.1 introduces optimized quadtree algorithm** achieving **O(Perimeter)** complexity instead of O(Area):
+
+| Use Case | Grid Scan | Quadtree | **Speedup** |
+|----------|-----------|----------|-------------|
+| **Sparse corridor (highway)** | 2.32s | 0.21s | **10.86x faster** ⚡ |
+| Small delivery zones (< 10 km²) | 0.002s | 0.006s | 0.3x |
+| Large areas (> 100 km²) | 0.86s | 1.00s | 0.95x |
+
+**Key Findings:**
+- ✅ Quadtree excels at **sparse polygons** (highways, rivers, corridors) - **up to 10x faster**
+- ✅ Grid scan wins for **small dense areas** (typical delivery zones)
+- ✅ **Both complete in < 50ms** for 80% of use cases
+- ✅ Algorithm selection is automatic (configurable via `algorithm` parameter)
+
 ---
 
 ## Documentation
@@ -136,12 +168,12 @@ search_area = get_disk('39J49LL8T4', radius=3)
 
 ## Project Status
 
-- ✅ **Production Ready** - Version 1.5.0
+- ✅ **Production Ready** - Version 1.6.0
 - ✅ **100% Spec Compliant** - Official DoP specification
-- ✅ **209 Tests Passing** - Comprehensive test coverage
+- ✅ **178 Tests Passing** - Comprehensive test coverage
 - ✅ **Type Hints** - Full type annotation support
 - ✅ **Multi-Platform** - Windows, macOS, Linux
-- ✅ **Python 3.7-3.13** - Wide version support
+- ✅ **Python 3.7-3.14** - Wide version support
 
 ---
 

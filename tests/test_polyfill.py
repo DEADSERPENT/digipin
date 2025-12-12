@@ -104,7 +104,9 @@ class TestPolyfillBasic:
             # Quadtree should find similar number of cells (within 20%)
             # May differ slightly due to boundary handling
             ratio = len(codes_quadtree) / len(codes_grid)
-            assert 0.8 <= ratio <= 1.2, f"Too much difference at precision {precision}: {ratio}"
+            assert (
+                0.8 <= ratio <= 1.2
+            ), f"Too much difference at precision {precision}: {ratio}"
 
             # All codes should be valid length
             assert all(len(code) == precision for code in codes_quadtree)
@@ -318,7 +320,9 @@ class TestPolyfillCorrectness:
 
             for code in codes:
                 lat, lon = decode(code)
-                assert poly.contains(Point(lon, lat)), f"{algorithm}: Code {code} center is outside polygon"
+                assert poly.contains(
+                    Point(lon, lat)
+                ), f"{algorithm}: Code {code} center is outside polygon"
 
     def test_coverage_completeness(self):
         """Test that polyfill provides good coverage inside the polygon."""

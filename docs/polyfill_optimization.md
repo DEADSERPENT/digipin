@@ -305,4 +305,4 @@ The polyfill optimization delivers:
 
 This implementation moves DIGIPIN one step closer to production-ready enterprise adoption, particularly for logistics and government use cases that require efficient polygon coverage calculations.
 
-**Status**: Ready for production use in v1.6.0+ 🚀
+**Status**: Ready for production use in v1.6.1+ 🚀
