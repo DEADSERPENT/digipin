@@ -9,6 +9,7 @@
 [![License](https://img.shields.io/pypi/l/digipinpy.svg)](https://github.com/DEADSERPENT/digipinpy/blob/main/LICENSE)
 [![Tests](https://github.com/DEADSERPENT/digipinpy/workflows/Tests/badge.svg)](https://github.com/DEADSERPENT/digipinpy/actions)
 [![codecov](https://codecov.io/github/DEADSERPENT/digipinpy/graph/badge.svg?token=G8NZBWAWPY)](https://codecov.io/github/DEADSERPENT/digipinpy)
+[![DOI](https://zenodo.org/badge/1101294193.svg)](https://doi.org/10.5281/zenodo.17916240)
 [![Downloads](https://static.pepy.tech/badge/digipinpy)](https://pepy.tech/project/digipinpy)
 
 [Documentation](https://github.com/DEADSERPENT/digipinpy/blob/main/docs/index.md) •
