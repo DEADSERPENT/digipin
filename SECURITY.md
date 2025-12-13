@@ -2,120 +2,118 @@
 
 ## Supported Versions
 
-We release patches for security vulnerabilities for the following versions:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.1.x   | :white_check_mark: |
-| 1.0.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| Package | Version | Supported |
+|---------|---------|-----------|
+| digipinpy (Python) | 1.6.x | ✅ |
+| digipinjs-lib (JavaScript) | 1.0.x | ✅ |
 
 ## Reporting a Vulnerability
 
-The DIGIPIN-Py team takes security bugs seriously. We appreciate your efforts to responsibly disclose your findings, and will make every effort to acknowledge your contributions.
+**⚠️ DO NOT report security vulnerabilities through public GitHub issues.**
 
-### How to Report
+### Preferred Method
+**GitHub Security Advisories:** https://github.com/DEADSERPENT/digipin/security/advisories/new
 
-**Please do not report security vulnerabilities through public GitHub issues.**
+### Alternative (Email)
+- Primary: samarthsmg14@gmail.com
+- Secondary: hmrshivu@gmail.com
 
-Instead, please report them via email to:
-
-- **Primary Contact**: samarthsmg14@gmail.com
-- **Secondary Contact**: hmrshivu@gmail.com
-
-You should receive a response within 48 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
+**Response Time:** Within 48 hours
 
 ### What to Include
+- Type of issue (injection, overflow, XSS, etc.)
+- Affected files/functions (with paths)
+- Reproduction steps (detailed)
+- Proof-of-concept (if available)
+- Impact assessment
 
-Please include the following information in your report:
+### Process
+1. Acknowledgment (48 hours)
+2. Investigation (5-7 days)
+3. Regular updates
+4. Coordinated disclosure
+5. Credit in release notes (unless anonymous)
 
-- Type of issue (e.g., buffer overflow, SQL injection, cross-site scripting, etc.)
-- Full paths of source file(s) related to the manifestation of the issue
-- The location of the affected source code (tag/branch/commit or direct URL)
-- Any special configuration required to reproduce the issue
-- Step-by-step instructions to reproduce the issue
-- Proof-of-concept or exploit code (if possible)
-- Impact of the issue, including how an attacker might exploit it
+## Security Best Practices
 
-### What to Expect
-
-- **Acknowledgment**: We'll acknowledge receipt of your vulnerability report within 48 hours
-- **Updates**: We'll send you updates about our progress every 5-7 days
-- **Disclosure**: We'll work with you to determine an appropriate disclosure timeline
-- **Credit**: We'll credit you in the release notes unless you prefer to remain anonymous
-
-### Our Commitment
-
-- We will respond to your report promptly
-- We will keep you informed of our progress towards a fix
-- We will handle your report with strict confidentiality
-- We will credit you for your discovery (unless you prefer anonymity)
-
-## Security Best Practices for Users
-
-### Input Validation
-
-Always validate user input before encoding:
-
+### Python
 ```python
-from digipin import encode, is_valid_coordinate
+from digipin import encode, is_valid
 
+# Validate input
+if not is_valid(user_input):
+    raise ValueError("Invalid DIGIPIN code")
+
+# Safe encoding
 def safe_encode(lat, lon):
-    if not is_valid_coordinate(lat, lon):
+    if not (-90 <= lat <= 90 and -180 <= lon <= 180):
         raise ValueError("Invalid coordinates")
     return encode(lat, lon)
 ```
 
-### Data Sanitization
+### JavaScript
+```javascript
+import { encode, isValid } from 'digipinjs-lib';
 
-When displaying DIGIPIN codes in web applications, ensure proper escaping:
+// Validate input
+if (!isValid(userInput)) {
+  throw new Error('Invalid DIGIPIN code');
+}
 
-```python
-import html
-
-def display_code(code):
-    return html.escape(code)
+// Safe encoding
+function safeEncode(lat, lon) {
+  if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    throw new Error('Coordinates out of range');
+  }
+  return encode(lat, lon);
+}
 ```
 
-### Dependency Management
+### API Security
+- **Rate limiting** - Implement for public APIs
+- **Input sanitization** - Escape output for web display
+- **Dependency audits** - Run `pip-audit` (Python) or `npm audit` (JavaScript)
 
-While DIGIPIN-Py has zero runtime dependencies, keep development dependencies updated:
+## Security Considerations
 
+### Location Privacy
+- DIGIPIN codes decode to approximate coordinates
+- Consider privacy before sharing
+- Use lower precision for less exact locations
+
+### Not Security Issues
+These are **by design**:
+- Deterministic encoding (same coords = same code)
+- Reversible decoding (feature, not bug)
+- No built-in authentication (add at app layer)
+
+### Report These
+- Crashes from malformed input
+- Memory leaks with large inputs
+- Code injection vulnerabilities
+- Invalid code generation
+
+## Dependency Security
+
+**Python:**
 ```bash
-pip install --upgrade pip setuptools wheel
-pip install -e ".[dev]" --upgrade
+pip install pip-audit
+pip-audit
 ```
 
-## Known Security Considerations
+**JavaScript:**
+```bash
+npm audit
+npm audit fix
+```
 
-### Coordinate Privacy
+## Resources
 
-- DIGIPIN codes can be decoded back to approximate coordinates
-- Consider the privacy implications before sharing location codes
-- Use appropriate precision levels for your use case
-
-### Input Bounds
-
-- The library validates input coordinates against India's geographic bounds
-- Invalid inputs raise `ValueError` - handle these appropriately in your application
-
-### Rate Limiting
-
-- Consider implementing rate limiting if exposing DIGIPIN encoding/decoding via API
-- Batch operations can be memory-intensive for very large datasets
-
-## Acknowledgments
-
-We thank the following security researchers for their responsible disclosure:
-
-- *None yet - be the first!*
+- **Advisories:** https://github.com/DEADSERPENT/digipin/security/advisories
+- **Issue Tracker:** https://github.com/DEADSERPENT/digipin/issues
 
 ## Contact
 
-For any security concerns, contact:
-- samarthsmg14@gmail.com
-- hmrshivu@gmail.com
-
----
-
-This security policy is based on best practices from the [security.txt](https://securitytxt.org/) standard.
+**Security Email:** samarthsmg14@gmail.com, hmrshivu@gmail.com
+**GitHub:** https://github.com/DEADSERPENT/digipin/security
+**Maintainers:** SAMARTHA H V, MR SHIVAKUMAR

@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 SAMARTHA H V
+Copyright (c) 2025 SAMARTHA H V, MR SHIVAKUMAR
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+This license applies to all implementations in this repository:
+- Python implementation (digipinpy)
+- JavaScript implementation (digipinjs-lib)
+- Shared documentation and test vectors
+- Build and CI/CD configurations
