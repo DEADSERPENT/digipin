@@ -31,8 +31,10 @@ comment:
   require_head: yes
 
 ignore:
-  - "tests/"
-  - "examples/"
+  - "python/tests/"
+  - "python/examples/"
+  - "python/benchmarks/"
+  - "javascript/"
   - "docs/"
   - "setup.py"
   - "**/test_*.py"
@@ -41,5 +43,5 @@ ignore:
 flags:
   unittests:
     paths:
-      - src/digipin/
+      - python/src/digipin/
     carryforward: true
