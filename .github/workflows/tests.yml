@@ -35,6 +35,7 @@ jobs:
         cache: 'pip' # Optimization: Cache pip packages to speed up builds
 
     - name: Install core dependencies
+      working-directory: python
       run: |
         python -m pip install --upgrade pip
         pip install -e ".[test]"
@@ -43,11 +44,13 @@ jobs:
     # This prevents slowing down Windows/Mac runs unnecessarily.
     - name: Install optional dependencies (Ubuntu/3.11 only)
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+      working-directory: python
       run: pip install pandas numpy django || true
 
     # Smart Test Step: Runs coverage ONLY on the main environment to avoid duplicates.
     # Runs standard fast tests on all other matrix combinations.
     - name: Run tests
+      working-directory: python
       shell: bash
       run: |
         if [ "${{ matrix.os }}" = "ubuntu-latest" ] && [ "${{ matrix.python-version }}" = "3.11" ]; then
@@ -65,7 +68,7 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage.xml  # Correct usage (non-deprecated)
+        files: ./python/coverage.xml  # Correct usage (non-deprecated)
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
@@ -76,7 +79,7 @@ jobs:
       uses: codecov/test-results-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./junit.xml
+        file: ./python/junit.xml
 
   lint:
     runs-on: ubuntu-latest
@@ -90,15 +93,18 @@ jobs:
         cache: 'pip'
 
     - name: Install linting dependencies
+      working-directory: python
       run: |
         python -m pip install --upgrade pip
         pip install black flake8 mypy
 
     - name: Check code formatting with Black
+      working-directory: python
       run: |
         black --check src/digipin tests/
 
     - name: Lint with flake8
+      working-directory: python
       run: |
         # Stop the build if there are Python syntax errors or undefined names
         flake8 src/digipin tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -106,6 +112,7 @@ jobs:
         flake8 src/digipin tests/ --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
     - name: Type check with mypy
+      working-directory: python
       run: |
         # Now checking both source AND tests for type safety
         mypy src/digipin tests --ignore-missing-imports
