@@ -39,7 +39,7 @@ if FLASK_AVAILABLE:
         """Create SQLAlchemy database."""
         db = SQLAlchemy(app)
 
-        class Location(db.Model):  # type: ignore
+        class Location(db.Model):
             __tablename__ = "locations"
             id = db.Column(db.Integer, primary_key=True)
             code = db.Column(DigipinType, nullable=False)

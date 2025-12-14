@@ -96,7 +96,6 @@ build: all-build ## Build all packages (Python + JavaScript)
 
 python-build: ## Build Python package
 	@echo "$(BLUE)Building Python package...$(NC)"
-	@python -m pip install build --quiet 2>/dev/null || pip install build
 	cd python && python -m build
 	@echo "$(GREEN)✓ Python package built: python/dist/$(NC)"
 
