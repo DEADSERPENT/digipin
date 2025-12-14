@@ -6,6 +6,9 @@ codecov:
   notify:
     wait_for_ci: yes
 
+fixes:
+  - "python/::"  # Map coverage paths (from python/) to repo paths
+
 coverage:
   precision: 2
   round: down
@@ -43,5 +46,5 @@ ignore:
 flags:
   unittests:
     paths:
-      - python/src/digipin/
+      - src/digipin/
     carryforward: true
