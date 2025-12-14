@@ -33,6 +33,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip' # Optimization: Cache pip packages to speed up builds
+        cache-dependency-path: python/pyproject.toml
 
     - name: Install core dependencies
       working-directory: python
@@ -91,6 +92,7 @@ jobs:
       with:
         python-version: '3.11'
         cache: 'pip'
+        cache-dependency-path: python/pyproject.toml
 
     - name: Install linting dependencies
       working-directory: python
