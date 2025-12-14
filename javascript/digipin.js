@@ -2,7 +2,7 @@
  * DIGIPIN-JS
  * Official JavaScript implementation of India's national geocoding standard
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @license MIT
  */
 
