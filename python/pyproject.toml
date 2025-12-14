@@ -8,8 +8,7 @@ version = "1.7.0"
 description = "Official Python implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
 readme = "README.md"
 requires-python = ">=3.7"
-license = "MIT"
-license-files = ["LICENSE"]
+license = {text = "MIT"}
 authors = [
     {name = "SAMARTHA H V", email = "samarthsmg14@gmail.com"}
 ]

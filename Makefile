@@ -96,7 +96,7 @@ build: all-build ## Build all packages (Python + JavaScript)
 
 python-build: ## Build Python package
 	@echo "$(BLUE)Building Python package...$(NC)"
-	cd python && python -m build
+	cd python && pip install --upgrade build && python -m build
 	@echo "$(GREEN)✓ Python package built: python/dist/$(NC)"
 
 js-build: ## Verify JavaScript package
