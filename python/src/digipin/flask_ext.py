@@ -285,7 +285,7 @@ def create_digipin_blueprint(url_prefix: str = "/api/digipin"):
         >>> # GET  /api/digipin/neighbors/<code> - Get neighbors
         >>> # POST /api/digipin/validate - Validate code
     """
-    from flask import Blueprint
+    from flask import Blueprint, current_app
 
     from .neighbors import get_neighbors, get_disk
     from .decoder import get_bounds
@@ -352,7 +352,9 @@ def create_digipin_blueprint(url_prefix: str = "/api/digipin"):
                 }
             )
         except ValueError as e:
-            return jsonify({"error": str(e)}), 400
+            # Security: Log the actual error internally, return sanitized message
+            current_app.logger.error(f"Neighbors endpoint error: {e}")
+            return jsonify({"error": "Invalid request parameters"}), 400
 
     @bp.route("/disk/<code>", methods=["GET"])
     def disk_endpoint(code: str):
@@ -376,7 +378,9 @@ def create_digipin_blueprint(url_prefix: str = "/api/digipin"):
                 }
             )
         except ValueError as e:
-            return jsonify({"error": str(e)}), 400
+            # Security: Log the actual error internally, return sanitized message
+            current_app.logger.error(f"Disk endpoint error: {e}")
+            return jsonify({"error": "Invalid request parameters"}), 400
 
     @bp.route("/validate", methods=["POST"])
     def validate_endpoint():

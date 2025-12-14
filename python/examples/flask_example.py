@@ -300,4 +300,8 @@ if __name__ == '__main__':
     print("       -d '{\"lat\": 28.6, \"lon\": 77.2, \"radius\": 2}'")
     print("\n" + "="*60 + "\n")
 
-    app.run(debug=True, port=5000)
+    # Security: Use environment variable to control debug mode
+    # Never use debug=True in production (enables code execution via browser)
+    import os
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 'yes')
+    app.run(debug=debug_mode, port=5000)

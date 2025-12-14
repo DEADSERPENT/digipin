@@ -2,6 +2,13 @@
 Command-line interface for digipin-py.
 
 Provides easy command-line access to encode, decode, and validate DIGIPIN codes.
+
+SECURITY NOTE:
+This CLI tool outputs location data (coordinates/DIGIPIN codes) to stdout,
+which is the expected behavior for command-line tools. If you redirect this
+output to log files in production systems, ensure appropriate access controls
+and data retention policies are in place to protect potentially sensitive
+location information.
 """
 
 import sys

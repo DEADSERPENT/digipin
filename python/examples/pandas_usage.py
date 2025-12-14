@@ -5,6 +5,11 @@ Demonstrates the pandas integration for efficient batch processing
 of DIGIPIN encoding, decoding, and neighbor discovery operations.
 
 Install with: pip install digipinpy[pandas]
+
+SECURITY NOTE:
+This is a demonstration script for local development only.
+DO NOT use in production environments where stdout is logged,
+as it prints location data that may be considered sensitive.
 """
 import sys
 import time
@@ -49,7 +54,7 @@ def benchmark():
     end = time.time()
     print(f"1. df.digipin.decode(): {end - start:.4f} seconds")
 
-    # Verify results
+    # Verify results (Note: This prints coordinates for demo purposes only)
     print(f"\nVerification: {coords.iloc[0]['latitude']:.6f}, {coords.iloc[0]['longitude']:.6f}")
 
 
