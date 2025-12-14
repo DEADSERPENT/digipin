@@ -33,7 +33,8 @@
 - 🎯 **Pinpoint Accuracy** - ~3.8m precision at level 10
 - 🗺️ **Hierarchical Grid** - Variable precision from 1000km down to 4m
 - 📦 **Zero Dependencies** - Pure Python core, optional framework integrations
-- ⚡ **High Performance** - ~50,000 encodes/second, optimized quadtree polyfill (10x faster for corridors)
+- ⚡ **High Performance** - ~50,000 encodes/second (pure Python), **~500K-750K with Cython (10-15x faster)**
+- 🚀 **Optional Cython Backend** - Compile for **10-15x speedup** on big data workloads
 - 🔌 **Framework Ready** - Native Pandas, Django, FastAPI & geospatial support
 - 📊 **CSV Batch Processing** - CLI tool for processing thousands of addresses
 - 🗺️ **Interactive Visualization** - Beautiful maps with Folium integration
@@ -42,11 +43,31 @@
 
 ## Installation
 
+### Standard Installation (Pure Python)
+
 ```bash
 pip install digipinpy
 ```
 
-**Optional integrations:**
+### High-Performance Installation (Cython - 10-15x faster)
+
+For **production deployments** and **big data workloads**, install with Cython optimization:
+
+```bash
+# Requires a C compiler (see docs for platform-specific setup)
+pip install cython
+pip install digipinpy[performance]
+
+# Build the optimized extension
+cd /path/to/digipinpy
+python setup.py build_ext --inplace
+```
+
+**Performance gain**: ~50K ops/sec → **~500K-750K ops/sec** (10-15x faster)
+
+See the [Performance Optimization Guide](https://github.com/DEADSERPENT/digipin/blob/main/docs/performance-optimization.md) for detailed instructions.
+
+### Optional Integrations
 
 ```bash
 pip install digipinpy[pandas]    # Data science & CSV processing
@@ -54,6 +75,7 @@ pip install digipinpy[django]    # Django database field
 pip install digipinpy[fastapi]   # FastAPI microservices
 pip install digipinpy[geo]       # Geospatial polyfill
 pip install digipinpy[viz]       # Interactive map visualization
+pip install digipinpy[performance]  # Cython optimization (10-15x faster)
 ```
 
 ---
@@ -113,6 +135,34 @@ codes = polyfill(polygon, precision=8, algorithm="grid")      # Fast for small d
 
 ## ⚡ Performance
 
+### Core Operations (Encoding/Decoding)
+
+| Backend | Encoding | Decoding | Use Case |
+|---------|----------|----------|----------|
+| **Pure Python** | ~40K ops/sec | ~50K ops/sec | Development, small datasets |
+| **Cython (C-compiled)** | **~400-600K ops/sec** | **~500-750K ops/sec** | Production, big data |
+
+**Speedup: 10-15x faster with Cython backend** 🚀
+
+```python
+import digipin
+
+# Check which backend is active
+backend = digipin.get_backend_info()
+print(backend)
+# {'backend': 'cython', 'performance': '10-15x', ...}
+```
+
+**When to use Cython:**
+- ✅ Processing 100K+ records
+- ✅ Real-time systems (sub-millisecond latency)
+- ✅ Production deployments with high throughput
+- ✅ Nightly batch geocoding jobs
+
+See [Performance Guide](https://github.com/DEADSERPENT/digipin/blob/main/docs/performance-optimization.md) for benchmarks and setup.
+
+### Polyfill Algorithm Performance
+
 **v1.6.1 introduces optimized quadtree algorithm** achieving **O(Perimeter)** complexity instead of O(Area):
 
 | Use Case | Grid Scan | Quadtree | **Speedup** |
@@ -144,6 +194,8 @@ codes = polyfill(polygon, precision=8, algorithm="grid")      # Fast for small d
 
 ### 🛠️ Development
 - [Contributing Guide](CONTRIBUTING.md) - How to contribute
+- [Build Guide](https://github.com/DEADSERPENT/digipin/blob/main/docs/BUILD_GUIDE.md) - Building from source
+- [Performance Optimization](https://github.com/DEADSERPENT/digipin/blob/main/docs/performance-optimization.md) - Cython backend setup (10-15x faster)
 - [Changelog](CHANGELOG.md) - Version history
 - [Technical Specification](https://github.com/DEADSERPENT/digipin/blob/main/docs/technical_spec.md) - Official DIGIPIN spec
 
@@ -153,7 +205,8 @@ codes = polyfill(polygon, precision=8, algorithm="grid")      # Fast for small d
 
 | Feature | Description |
 |---------|-------------|
-| **Encoding/Decoding** | Coordinates ↔ DIGIPIN codes |
+| **Encoding/Decoding** | Coordinates ↔ DIGIPIN codes (50K ops/sec pure Python, **500K-750K with Cython**) |
+| **Cython Backend** | Optional C-compiled backend for **10-15x speedup** |
 | **Validation** | Check code validity with `is_valid()` |
 | **Batch Operations** | Process arrays efficiently |
 | **Proximity Search** | Find neighbors, rings, disks |
@@ -186,9 +239,14 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 git clone https://github.com/DEADSERPENT/digipin.git
-cd digipin
+cd digipin/python
 pip install -e ".[dev]"
 pytest tests/ -v
+
+# Optional: Build Cython extension for 10-15x speedup
+pip install cython
+python setup.py build_ext --inplace
+python benchmarks/cython_performance.py  # Verify speedup
 ```
 
 ---

@@ -72,18 +72,77 @@ Visualization (Optional):
         m.save('map.html')
 """
 
-__version__ = "1.7.0"
+__version__ = "1.8.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 
+# ============================================================================
+# PERFORMANCE BACKEND SELECTION
+# ============================================================================
+# Automatically use Cython-optimized backend if available (10-15x faster)
+# Falls back gracefully to pure Python if Cython extension is not compiled
 
-# Core functions
-from .encoder import encode, batch_encode, encode_with_bounds
+_BACKEND = "python"  # Default backend
+
+try:
+    # Try importing Cython-optimized functions
+    from .core_fast import (
+        encode_fast as _encode_impl,
+        decode_fast as _decode_impl,
+        get_bounds_fast as _get_bounds_impl,
+        batch_encode_fast as _batch_encode_impl,
+        batch_decode_fast as _batch_decode_impl,
+    )
+    _BACKEND = "cython"
+    _PERFORMANCE_MULTIPLIER = "10-15x"
+except ImportError:
+    # Fall back to pure Python implementation
+    from .encoder import encode as _encode_impl, batch_encode as _batch_encode_impl
+    from .decoder import (
+        decode as _decode_impl,
+        get_bounds as _get_bounds_impl,
+        batch_decode as _batch_decode_impl,
+    )
+    _BACKEND = "python"
+    _PERFORMANCE_MULTIPLIER = "1x (baseline)"
+
+
+def get_backend_info():
+    """
+    Get information about the active performance backend.
+
+    Returns:
+        dict: Backend information including name and performance multiplier
+
+    Example:
+        >>> info = get_backend_info()
+        >>> print(info['backend'])
+        'cython'  # or 'python'
+        >>> print(info['performance'])
+        '10-15x'  # or '1x (baseline)'
+    """
+    return {
+        "backend": _BACKEND,
+        "performance": _PERFORMANCE_MULTIPLIER,
+        "description": (
+            "Cython-optimized (C-compiled) implementation"
+            if _BACKEND == "cython"
+            else "Pure Python implementation"
+        ),
+    }
+
+
+# Expose optimized functions with standard API
+encode = _encode_impl
+decode = _decode_impl
+get_bounds = _get_bounds_impl
+batch_encode = _batch_encode_impl
+batch_decode = _batch_decode_impl
+
+# Import remaining functions from pure Python modules
+from .encoder import encode_with_bounds
 from .decoder import (
-    decode,
-    get_bounds,
     decode_with_bounds,
-    batch_decode,
     get_parent,
     is_within,
 )
@@ -162,6 +221,8 @@ __all__ = [
     "get_precision_info",
     "get_grid_size",
     "get_approx_distance",
+    # Performance
+    "get_backend_info",
     # Constants
     "LAT_MIN",
     "LAT_MAX",

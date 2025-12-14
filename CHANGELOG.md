@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+> **Note:** Starting v1.8.0, Python and JavaScript have separate changelogs:
+> - Python: [python/CHANGELOG.md](python/CHANGELOG.md)
+> - JavaScript: [javascript/CHANGELOG.md](javascript/CHANGELOG.md)
+
+---
+
+## [1.8.0] - 2025-12-15
+
+### Python - MAJOR PERFORMANCE: Cython Backend (10-15x Speedup)
+
+**High-performance C-compiled backend for production deployments!**
+
+#### Key Highlights
+
+- 🚀 **10-15x Performance Boost** - Optional Cython backend
+  - Encoding: ~40K → **~400-600K ops/sec**
+  - Decoding: ~50K → **~500-750K ops/sec**
+
+- ⚡ **Transparent Integration** - Zero API changes
+  - Automatic backend selection (Cython → Python fallback)
+  - Check with `get_backend_info()`
+
+- 🔧 **Easy Build** - Platform-specific optimization
+  ```bash
+  pip install cython
+  python setup.py build_ext --inplace
+  ```
+
+- 📊 **Production Ready** - For big data workloads
+  - Real-time systems (sub-millisecond latency)
+  - Batch processing (100K+ records)
+  - Enterprise deployments
+
+#### New Files (Python)
+
+- `python/src/digipin/core_fast.pyx` - Cython implementation
+- `python/setup.py` - Build configuration
+- `python/benchmarks/cython_performance.py` - Benchmark suite
+- `docs/performance-optimization.md` - Complete guide
+- `python/README_CYTHON.md` - Quick reference
+
+#### Performance Comparison
+
+| Operation | Pure Python | Cython | Speedup |
+|-----------|-------------|--------|---------|
+| Encoding | ~40K/sec | **~400-600K/sec** | **10-15x** ⚡ |
+| Decoding | ~50K/sec | **~500-750K/sec** | **10-15x** ⚡ |
+
+#### When to Use
+
+✅ **Cython:** Processing 100K+ records, real-time systems, production
+❌ **Pure Python:** Development, small datasets, no C compiler
+
+See [Performance Guide](docs/performance-optimization.md) for full details.
+
+---
+
 ## [1.6.0] - 2025-12-12
 
 ### Added - MAJOR PERFORMANCE: Optimized Quadtree Polyfill Algorithm

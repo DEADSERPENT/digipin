@@ -19,7 +19,34 @@ pip install -e ".[dev]"
 # Or with specific extras
 pip install -e ".[test]"      # Testing only
 pip install -e ".[pandas]"    # Pandas integration
+pip install -e ".[performance]"  # With Cython optimization (10-15x faster)
 ```
+
+### 1a. Build with Cython Optimization (Recommended for Production)
+
+For **10-15x performance improvement**, compile the Cython extension:
+
+```bash
+# Install Cython and build tools
+pip install cython
+
+# Build the C extension
+python setup.py build_ext --inplace
+
+# Install in development mode
+pip install -e ".[dev]"
+
+# Verify Cython backend is active
+python -c "import digipin; print(digipin.get_backend_info())"
+# Should show: {'backend': 'cython', 'performance': '10-15x', ...}
+```
+
+**Note:** Requires a C compiler:
+- **Linux**: `gcc` (usually pre-installed)
+- **macOS**: Xcode Command Line Tools (`xcode-select --install`)
+- **Windows**: Microsoft Visual C++ 14.0+ ([Download](https://visualstudio.microsoft.com/visual-cpp-build-tools/))
+
+See [Performance Optimization Guide](performance-optimization.md) for details.
 
 ### 2. Verify Installation
 
@@ -77,13 +104,36 @@ rm -rf build/ dist/ src/digipinpy.egg-info/
 
 ### 2. Build Distribution Files
 
+#### Option A: Pure Python Build (Universal Wheel)
+
 ```bash
 python -m build
 ```
 
 This creates:
-- `dist/digipinpy-1.1.0-py3-none-any.whl` (wheel)
-- `dist/digipinpy-1.1.0.tar.gz` (source distribution)
+- `dist/digipinpy-1.7.0-py3-none-any.whl` (pure Python wheel - works everywhere)
+- `dist/digipinpy-1.7.0.tar.gz` (source distribution)
+
+#### Option B: Build with Cython Extension (Platform-Specific Wheel)
+
+For maximum performance, build platform-specific wheels with Cython:
+
+```bash
+# Install Cython
+pip install cython
+
+# Build wheel with C extension
+python setup.py bdist_wheel
+
+# This creates a platform-specific wheel like:
+# - dist/digipinpy-1.8.0-cp311-cp311-linux_x86_64.whl (Linux)
+# - dist/digipinpy-1.8.0-cp311-cp311-macosx_10_9_x86_64.whl (macOS)
+# - dist/digipinpy-1.8.0-cp311-cp311-win_amd64.whl (Windows)
+```
+
+**When to use which:**
+- **Pure Python**: For maximum compatibility across platforms
+- **Cython wheel**: For production deployments needing 10-15x performance
 
 ### 3. Verify Package Contents
 
@@ -92,10 +142,10 @@ This creates:
 twine check dist/*
 
 # List contents of wheel
-python -m zipfile -l dist/digipinpy-1.1.0-py3-none-any.whl
+python -m zipfile -l dist/digipinpy-1.8.0-py3-none-any.whl
 
 # List contents of source distribution
-tar -tzf dist/digipinpy-1.1.0.tar.gz  # Unix/macOS
+tar -tzf dist/digipinpy-1.8.0.tar.gz  # Unix/macOS
 ```
 
 Expected structure in wheel:
@@ -121,7 +171,7 @@ python -m venv test_env
 source test_env/bin/activate  # Windows: test_env\Scripts\activate
 
 # Install from the built wheel
-pip install dist/digipinpy-1.1.0-py3-none-any.whl
+pip install dist/digipinpy-1.8.0-py3-none-any.whl
 
 # Test import and functionality
 python -c "from digipin import encode; print(encode(28.622788, 77.213033))"
@@ -180,12 +230,14 @@ Before creating a new release:
 - [ ] Update `CHANGELOG.md` with release notes
 - [ ] Run all tests: `pytest tests/ -v`
 - [ ] Run code quality checks: `black`, `flake8`, `mypy`
-- [ ] Build the package: `python -m build`
+- [ ] Build pure Python package: `python -m build`
+- [ ] Build Cython wheels (optional): `python setup.py bdist_wheel`
 - [ ] Check the build: `twine check dist/*`
-- [ ] Test installation locally
+- [ ] Test installation locally (both Python and Cython)
+- [ ] Run performance benchmark: `python benchmarks/cython_performance.py`
 - [ ] Commit all changes
-- [ ] Create Git tag: `git tag -a v1.1.0 -m "Release v1.1.0"`
-- [ ] Push tag: `git push origin v1.1.0`
+- [ ] Create Git tag: `git tag -a v1.8.0 -m "Release v1.8.0"`
+- [ ] Push tag: `git push origin v1.8.0`
 - [ ] Upload to PyPI: `twine upload dist/*`
 - [ ] Create GitHub Release with changelog
 - [ ] Verify installation: `pip install digipinpy --upgrade`

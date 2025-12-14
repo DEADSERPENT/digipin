@@ -1,10 +1,14 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = [
+    "setuptools>=61.0",
+    "wheel",
+    "cython>=0.29.0; platform_python_implementation == 'CPython'",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "digipinpy"
-version = "1.7.0"
+version = "1.8.0"
 description = "Official Python implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -61,6 +65,10 @@ dev = [
     "black>=22.0",
     "flake8>=5.0",
     "mypy>=0.990",
+    "cython>=0.29.0",
+]
+performance = [
+    "cython>=0.29.0",
 ]
 test = [
     "pytest>=7.0",
