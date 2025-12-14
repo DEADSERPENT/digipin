@@ -6,7 +6,7 @@ Welcome to the official documentation for **DIGIPIN-Py**, the Python implementat
 
 - **[API Reference](DOCUMENTATION.md)** - Complete function reference and usage examples
 - **[Technical Specification](technical_spec.md)** - Official DIGIPIN specification from Department of Posts
-- **[GitHub Repository](https://github.com/DEADSERPENT/digipinpy)** - Source code and issue tracking
+- **[GitHub Repository](https://github.com/DEADSERPENT/digipin)** - Source code and issue tracking
 - **[Contributing Guide](../CONTRIBUTING.md)** - How to contribute to the project
 
 ## What is DIGIPIN?
@@ -242,8 +242,8 @@ All encoding and decoding operations follow the exact algorithms specified in th
 
 ## Support & Community
 
-- **Issues**: [GitHub Issue Tracker](https://github.com/DEADSERPENT/digipinpy/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/DEADSERPENT/digipinpy/discussions)
+- **Issues**: [GitHub Issue Tracker](https://github.com/DEADSERPENT/digipin/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/DEADSERPENT/digipin/discussions)
 - **Email**: samarthsmg14@gmail.com, hmrshivu@gmail.com
 
 ## License

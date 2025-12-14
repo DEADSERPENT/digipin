@@ -75,7 +75,7 @@ jobs:
 
     # Upload test results (using stable @v1 tag)
     - name: Upload test results to Codecov
-      if: ${{ !cancelled() }} && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+      if: ${{ !cancelled() && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11' }}
       uses: codecov/test-results-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}

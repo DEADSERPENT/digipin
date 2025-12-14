@@ -30,7 +30,7 @@ Official Specification:
     Government of India — March 2025
 
 Project Links:
-    GitHub: https://github.com/DEADSERPENT/digipinpy
+    GitHub: https://github.com/DEADSERPENT/digipin
     PyPI:   https://pypi.org/project/digipinpy
 
 Pandas Integration (Optional):
@@ -72,7 +72,7 @@ Visualization (Optional):
         m.save('map.html')
 """
 
-__version__ = "1.6.1"
+__version__ = "1.7.0"
 __author__ = "SAMARTHA H V"
 __license__ = "MIT"
 

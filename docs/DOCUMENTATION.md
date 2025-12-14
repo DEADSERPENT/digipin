@@ -159,7 +159,7 @@ pip install digipinpy[pandas,django,fastapi,geo,viz]
 ### Install from Source
 
 ```bash
-git clone https://github.com/DEADSERPENT/digipinpy.git
+git clone https://github.com/DEADSERPENT/digipin.git
 cd digipinpy
 pip install -e .
 ```
@@ -1843,7 +1843,7 @@ digipinpy/
 
 ### Getting Help
 
-- **GitHub Issues**: https://github.com/DEADSERPENT/digipinpy/issues
+- **GitHub Issues**: https://github.com/DEADSERPENT/digipin/issues
 - **Email**: samarthsmg14@gmail.com
 
 ### Contributing

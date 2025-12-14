@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "digipinpy"
-version = "1.6.1"
+version = "1.7.0"
 description = "Official Python implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
 readme = "README.md"
 requires-python = ">=3.7"
-license = {file = "LICENSE"}
+license = {file = "../LICENSE"}
 authors = [
     {name = "SAMARTHA H V", email = "samarthsmg14@gmail.com"}
 ]
@@ -89,14 +89,14 @@ viz = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/DEADSERPENT/digipinpy"
-Documentation = "https://github.com/DEADSERPENT/digipinpy/blob/main/docs/index.md"
-Repository = "https://github.com/DEADSERPENT/digipinpy"
-"Issue Tracker" = "https://github.com/DEADSERPENT/digipinpy/issues"
-"Source Code" = "https://github.com/DEADSERPENT/digipinpy"
-Changelog = "https://github.com/DEADSERPENT/digipinpy/blob/main/CHANGELOG.md"
-"Bug Reports" = "https://github.com/DEADSERPENT/digipinpy/issues/new?template=bug_report.md"
-"Feature Requests" = "https://github.com/DEADSERPENT/digipinpy/issues/new?template=feature_request.md"
+Homepage = "https://github.com/DEADSERPENT/digipin"
+Documentation = "https://github.com/DEADSERPENT/digipin/blob/main/docs/index.md"
+Repository = "https://github.com/DEADSERPENT/digipin"
+"Issue Tracker" = "https://github.com/DEADSERPENT/digipin/issues"
+"Source Code" = "https://github.com/DEADSERPENT/digipin"
+Changelog = "https://github.com/DEADSERPENT/digipin/blob/main/CHANGELOG.md"
+"Bug Reports" = "https://github.com/DEADSERPENT/digipin/issues/new?template=bug_report.md"
+"Feature Requests" = "https://github.com/DEADSERPENT/digipin/issues/new?template=feature_request.md"
 
 [project.scripts]
 digipin = "digipin.cli:main"

@@ -261,5 +261,5 @@ if __name__ == '__main__':
     print("- Use get_disk() for radius-based searches")
     print("- Use get_neighbors() for immediate adjacency")
     print("- Combine with database queries for real-world apps")
-    print("\nDocumentation: https://github.com/DEADSERPENT/digipinpy")
+    print("\nDocumentation: https://github.com/DEADSERPENT/digipin")
     print("=" * 60 + "\n")

@@ -340,6 +340,6 @@ Common issues:
 
 ## Support
 
-- **Issues:** https://github.com/DEADSERPENT/digipinpy/issues
-- **Discussions:** https://github.com/DEADSERPENT/digipinpy/discussions
+- **Issues:** https://github.com/DEADSERPENT/digipin/issues
+- **Discussions:** https://github.com/DEADSERPENT/digipin/discussions
 - **Email:** samarthsmg14@gmail.com, hmrshivu@gmail.com

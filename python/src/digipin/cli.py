@@ -158,7 +158,7 @@ Examples:
   digipin validate 39J49LL8T4
   digipin info
 
-For more information, visit: https://github.com/DEADSERPENT/digipinpy
+For more information, visit: https://github.com/DEADSERPENT/digipin
         """,
     )
 

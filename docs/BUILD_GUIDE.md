@@ -258,7 +258,7 @@ We follow [Semantic Versioning](https://semver.org/):
 
 For build or release issues:
 - Email: samarthsmg14@gmail.com, hmrshivu@gmail.com
-- Issues: https://github.com/DEADSERPENT/digipinpy/issues
+- Issues: https://github.com/DEADSERPENT/digipin/issues
 
 ---
 
