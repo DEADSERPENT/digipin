@@ -84,7 +84,7 @@ class DigipinType(TypeDecorator):
 
     def __init__(self, *args, **kwargs):
         # Force length to 10 for DIGIPIN codes
-        kwargs['length'] = 10
+        kwargs["length"] = 10
         super().__init__(*args, **kwargs)
 
     def process_bind_param(self, value: Optional[str], dialect) -> Optional[str]:
@@ -225,9 +225,7 @@ def validate_coordinates_request(
                 lon = float(data[lon_field])
             except (ValueError, TypeError):
                 return (
-                    jsonify(
-                        {"error": "Latitude and longitude must be numeric values"}
-                    ),
+                    jsonify({"error": "Latitude and longitude must be numeric values"}),
                     400,
                 )
 
@@ -347,7 +345,11 @@ def create_digipin_blueprint(url_prefix: str = "/api/digipin"):
         try:
             neighbors = get_neighbors(code, direction=direction)
             return jsonify(
-                {"center": code.upper(), "neighbors": neighbors, "count": len(neighbors)}
+                {
+                    "center": code.upper(),
+                    "neighbors": neighbors,
+                    "count": len(neighbors),
+                }
             )
         except ValueError as e:
             return jsonify({"error": str(e)}), 400

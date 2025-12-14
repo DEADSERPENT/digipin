@@ -59,7 +59,9 @@ class DecodeResponse(BaseModel):
 
 
 class BatchEncodeRequest(BaseModel):
-    coordinates: List[Coordinate] = Field(..., description="List of coordinates to encode")
+    coordinates: List[Coordinate] = Field(
+        ..., description="List of coordinates to encode"
+    )
     precision: int = Field(10, ge=1, le=10, description="Precision level (1-10)")
 
 
@@ -119,7 +121,7 @@ async def get_adjacent_cells(code: str, direction: str = "all"):
 @router.get("/disk/{code}")
 async def get_search_area(
     code: str,
-    radius: int = Query(1, ge=0, le=100, description="Search radius in cells")
+    radius: int = Query(1, ge=0, le=100, description="Search radius in cells"),
 ):
     """
     Get all cells within a specified radius (filled disk).
@@ -139,7 +141,7 @@ async def get_search_area(
             "radius": radius,
             "grid_size": f"{2*radius+1}x{2*radius+1}",
             "cells": cells,
-            "count": len(cells)
+            "count": len(cells),
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -147,8 +149,7 @@ async def get_search_area(
 
 @router.get("/ring/{code}")
 async def get_ring_cells(
-    code: str,
-    radius: int = Query(1, ge=1, le=100, description="Ring radius in cells")
+    code: str, radius: int = Query(1, ge=1, le=100, description="Ring radius in cells")
 ):
     """
     Get all cells at exactly the specified radius (hollow ring).
@@ -158,12 +159,7 @@ async def get_ring_cells(
 
     try:
         cells = get_ring(code, radius=radius)
-        return {
-            "center": code,
-            "radius": radius,
-            "cells": cells,
-            "count": len(cells)
-        }
+        return {"center": code, "radius": radius, "cells": cells, "count": len(cells)}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -171,7 +167,7 @@ async def get_ring_cells(
 @router.get("/parent/{code}")
 async def get_parent_code(
     code: str,
-    level: int = Query(..., ge=1, le=10, description="Target precision level")
+    level: int = Query(..., ge=1, le=10, description="Target precision level"),
 ):
     """Get parent code at specified hierarchical level."""
     if not is_valid_digipin(code):
@@ -183,7 +179,7 @@ async def get_parent_code(
             "original": code,
             "parent": parent,
             "original_level": len(code),
-            "parent_level": len(parent)
+            "parent_level": len(parent),
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -195,11 +191,7 @@ async def batch_encode_coordinates(request: BatchEncodeRequest):
     try:
         coords = [(c.lat, c.lon) for c in request.coordinates]
         codes = batch_encode(coords, precision=request.precision)
-        return {
-            "precision": request.precision,
-            "count": len(codes),
-            "codes": codes
-        }
+        return {"precision": request.precision, "count": len(codes), "codes": codes}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -211,15 +203,14 @@ async def batch_decode_codes(request: BatchDecodeRequest):
     invalid_codes = [c for c in request.codes if not is_valid_digipin(c)]
     if invalid_codes:
         raise HTTPException(
-            status_code=400,
-            detail=f"Invalid DIGIPIN codes: {', '.join(invalid_codes)}"
+            status_code=400, detail=f"Invalid DIGIPIN codes: {', '.join(invalid_codes)}"
         )
 
     try:
         coords = batch_decode(request.codes)
         return {
             "count": len(coords),
-            "coordinates": [{"lat": lat, "lon": lon} for lat, lon in coords]
+            "coordinates": [{"lat": lat, "lon": lon} for lat, lon in coords],
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -235,10 +226,7 @@ async def validate_code(code: str, strict: bool = False):
     """
     valid = is_valid_digipin(code, strict=strict)
 
-    response = {
-        "code": code.upper() if valid else code,
-        "valid": valid
-    }
+    response = {"code": code.upper() if valid else code, "valid": valid}
 
     if valid:
         response["precision"] = len(code)
@@ -251,7 +239,7 @@ async def validate_code(code: str, strict: bool = False):
         elif strict and len(code) != 10:
             errors.append(f"Strict mode requires 10 characters, got {len(code)}")
         else:
-            invalid_chars = [c for c in code.upper() if c not in '23456789CFJKLMPT']
+            invalid_chars = [c for c in code.upper() if c not in "23456789CFJKLMPT"]
             if invalid_chars:
                 errors.append(f"Invalid characters: {', '.join(set(invalid_chars))}")
 
@@ -274,16 +262,13 @@ async def get_cell_bounds(code: str):
                 "min_lat": min_lat,
                 "max_lat": max_lat,
                 "min_lon": min_lon,
-                "max_lon": max_lon
+                "max_lon": max_lon,
             },
-            "center": {
-                "lat": (min_lat + max_lat) / 2,
-                "lon": (min_lon + max_lon) / 2
-            },
+            "center": {"lat": (min_lat + max_lat) / 2, "lon": (min_lon + max_lon) / 2},
             "dimensions": {
                 "lat_span": max_lat - min_lat,
-                "lon_span": max_lon - min_lon
-            }
+                "lon_span": max_lon - min_lon,
+            },
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -292,8 +277,4 @@ async def get_cell_bounds(code: str):
 @router.get("/health")
 async def health_check():
     """Health check endpoint for monitoring."""
-    return {
-        "status": "healthy",
-        "service": "digipin-api",
-        "version": "1.0.0"
-    }
+    return {"status": "healthy", "service": "digipin-api", "version": "1.0.0"}

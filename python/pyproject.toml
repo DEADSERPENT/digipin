@@ -9,6 +9,7 @@ description = "Official Python implementation of DIGIPIN - India's national geoc
 readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     {name = "SAMARTHA H V", email = "samarthsmg14@gmail.com"}
 ]
@@ -33,7 +34,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Information Technology",
-    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
@@ -104,7 +104,6 @@ digipin = "digipin.cli:main"
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["digipin"]
-license-files = ["LICENSE"]
 
 [tool.setuptools.package-data]
 digipin = ["py.typed"]
