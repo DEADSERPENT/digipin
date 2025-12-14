@@ -8,7 +8,7 @@ version = "1.7.0"
 description = "Official Python implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
 readme = "README.md"
 requires-python = ">=3.7"
-license = {file = "../LICENSE"}
+license = "MIT"
 authors = [
     {name = "SAMARTHA H V", email = "samarthsmg14@gmail.com"}
 ]
@@ -104,6 +104,7 @@ digipin = "digipin.cli:main"
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["digipin"]
+license-files = ["LICENSE"]
 
 [tool.setuptools.package-data]
 digipin = ["py.typed"]
