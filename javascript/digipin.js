@@ -2,7 +2,7 @@
  * DIGIPIN-JS
  * Official JavaScript implementation of India's national geocoding standard
  *
- * @version 1.1.0
+ * @version 1.2.0
  * @license MIT
  */
 
@@ -329,6 +329,80 @@ function getDisk(code, radius = 1) {
 }
 
 /**
+ * Gets all cells at exactly radius distance (hollow ring)
+ * Uses Chebyshev distance (chessboard distance) where diagonal moves count as 1 step
+ * @param {string} code - Center DIGIPIN code
+ * @param {number} radius - Distance in cells (must be >= 1)
+ * @returns {string[]} Array of codes forming the ring at specified radius
+ * @throws {Error} If code or radius is invalid
+ * @example
+ * // Get cells exactly 1 step away (8 immediate neighbors)
+ * getRing('39J49LL8T4', 1); // Returns ~8 neighbors
+ *
+ * // Get cells exactly 2 steps away (outer ring)
+ * getRing('39J49LL8T4', 2); // Returns up to 16 cells
+ */
+function getRing(code, radius) {
+    if (!isValid(code)) {
+        throw new Error(`Invalid DIGIPIN code: ${code}`);
+    }
+
+    if (!Number.isInteger(radius) || radius < 1) {
+        throw new Error('Radius must be an integer >= 1');
+    }
+
+    const { lat, lon } = decode(code);
+    const level = code.length;
+    const gridSize = GRID_SIZES[level - 1];
+    const upperCode = code.toUpperCase();
+
+    const cells = new Set();
+
+    // For a ring at radius R, we need cells where max(|dx|, |dy|) = R
+    // This means either |dx| = R or |dy| = R (or both)
+
+    // Top and bottom edges (full width)
+    for (let dx = -radius; dx <= radius; dx++) {
+        for (let dy of [radius, -radius]) {
+            const nLat = lat + (dy * gridSize.lat);
+            const nLon = lon + (dx * gridSize.lon);
+
+            if (isValidCoordinate(nLat, nLon)) {
+                try {
+                    const nCode = encode(nLat, nLon, level);
+                    if (nCode !== upperCode) {
+                        cells.add(nCode);
+                    }
+                } catch (e) {
+                    // Skip invalid coordinates
+                }
+            }
+        }
+    }
+
+    // Left and right edges (excluding corners already added)
+    for (let dy = -radius + 1; dy < radius; dy++) {
+        for (let dx of [radius, -radius]) {
+            const nLat = lat + (dy * gridSize.lat);
+            const nLon = lon + (dx * gridSize.lon);
+
+            if (isValidCoordinate(nLat, nLon)) {
+                try {
+                    const nCode = encode(nLat, nLon, level);
+                    if (nCode !== upperCode) {
+                        cells.add(nCode);
+                    }
+                } catch (e) {
+                    // Skip invalid coordinates
+                }
+            }
+        }
+    }
+
+    return Array.from(cells);
+}
+
+/**
  * Batch encode multiple coordinate pairs
  * @param {Array<{lat: number, lon: number}>} coordinates - Array of coordinate objects
  * @param {number} precision - Code length (1-10), default 10
@@ -393,6 +467,7 @@ if (typeof module !== 'undefined' && module.exports) {
         getParent,
         getNeighbors,
         getDisk,
+        getRing,
         batchEncode,
         batchDecode,
         INDIA_BOUNDS,
@@ -411,6 +486,7 @@ if (typeof window !== 'undefined') {
         getParent,
         getNeighbors,
         getDisk,
+        getRing,
         batchEncode,
         batchDecode,
         INDIA_BOUNDS,

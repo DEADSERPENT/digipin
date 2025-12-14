@@ -52,7 +52,7 @@ pnpm add digipinjs-lib
 ## 🚀 Quick Start
 
 ```javascript
-import { encode, decode, getNeighbors, getDisk } from 'digipinjs-lib';
+import { encode, decode, getNeighbors, getDisk, getRing } from 'digipinjs-lib';
 
 // Encode coordinates to DIGIPIN
 const pin = encode(28.622788, 77.213033);  // '39J49LL8T4'
@@ -67,8 +67,11 @@ const doorCode = encode(28.6, 77.2, 10);   // '39J49LL8T4' (~4m)
 // Find 8 immediate neighbors
 const neighbors = getNeighbors(pin);
 
-// Get all cells within radius
+// Get all cells within radius (filled disk)
 const area = getDisk(pin, 5);              // 11×11 grid (~300m)
+
+// Get cells at exact distance (hollow ring)
+const ring = getRing(pin, 2);              // Cells exactly 2 steps away
 
 // Validate codes
 import { isValid } from 'digipinjs-lib';

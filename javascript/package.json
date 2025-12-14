@@ -1,6 +1,6 @@
 {
   "name": "digipinjs-lib",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Official JavaScript implementation of India's DIGIPIN national geocoding standard",
   "main": "digipin.js",
   "types": "digipin.d.ts",

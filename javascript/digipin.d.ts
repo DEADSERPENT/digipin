@@ -149,6 +149,22 @@ export function getNeighbors(code: string, direction?: Direction): string[];
 export function getDisk(code: string, radius?: number): string[];
 
 /**
+ * Gets all cells at exactly radius distance (hollow ring)
+ * Uses Chebyshev distance (chessboard distance) where diagonal moves count as 1 step
+ * @param code - Center DIGIPIN code
+ * @param radius - Distance in cells (must be >= 1)
+ * @returns Array of codes forming the ring at specified radius
+ * @throws {Error} If code or radius is invalid
+ * @example
+ * // Get cells exactly 1 step away (8 immediate neighbors)
+ * const ring1 = getRing('39J49LL8T4', 1);
+ *
+ * // Get cells exactly 2 steps away (outer ring)
+ * const ring2 = getRing('39J49LL8T4', 2); // Up to 16 cells
+ */
+export function getRing(code: string, radius: number): string[];
+
+/**
  * Batch encode multiple coordinate pairs
  * @param coordinates - Array of coordinate objects
  * @param precision - Code length (1-10), default 10
@@ -195,6 +211,7 @@ declare const digipin: {
     getParent: typeof getParent;
     getNeighbors: typeof getNeighbors;
     getDisk: typeof getDisk;
+    getRing: typeof getRing;
     batchEncode: typeof batchEncode;
     batchDecode: typeof batchDecode;
     INDIA_BOUNDS: IndiaBounds;
