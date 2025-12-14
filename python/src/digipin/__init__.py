@@ -93,6 +93,7 @@ try:
         batch_encode_fast as _batch_encode_impl,
         batch_decode_fast as _batch_decode_impl,
     )
+
     _BACKEND = "cython"
     _PERFORMANCE_MULTIPLIER = "10-15x"
 except ImportError:
@@ -103,6 +104,7 @@ except ImportError:
         get_bounds as _get_bounds_impl,
         batch_decode as _batch_decode_impl,
     )
+
     _BACKEND = "python"
     _PERFORMANCE_MULTIPLIER = "1x (baseline)"
 
