@@ -43,10 +43,11 @@ jobs:
 
     # Optimization: Only install heavy deps on the canonical environment (Ubuntu/3.11)
     # This prevents slowing down Windows/Mac runs unnecessarily.
+    # Installing all optional extras ensures accurate coverage reporting to Codecov
     - name: Install optional dependencies (Ubuntu/3.11 only)
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
       working-directory: python
-      run: pip install pandas numpy django || true
+      run: pip install -e ".[pandas,django,fastapi,geo,viz]" || true
 
     # Smart Test Step: Runs coverage ONLY on the main environment to avoid duplicates.
     # Runs standard fast tests on all other matrix combinations.
