@@ -86,6 +86,7 @@ fastapi = [
     "fastapi>=0.68.0",
     "pydantic>=1.8.0",
     "uvicorn>=0.15.0",
+    "httpx>=0.23.0",  # Required for TestClient
 ]
 geo = [
     "shapely>=2.0.0",
