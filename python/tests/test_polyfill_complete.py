@@ -20,6 +20,7 @@ class TestPolyfillWithoutShapely:
         """Test that polyfill can be imported."""
         try:
             from digipin import polyfill
+
             # If shapely is available, polyfill should be callable
             assert callable(polyfill)
         except ImportError:
@@ -196,12 +197,14 @@ class TestPolyfillQuadtreeHelpers:
             from digipin.polyfill_quadtree import _get_cell_relationship
 
             # Create a large polygon that definitely contains a cell
-            poly = Polygon([
-                (77.0, 28.0),
-                (78.0, 28.0),
-                (78.0, 29.0),
-                (77.0, 29.0),
-            ])
+            poly = Polygon(
+                [
+                    (77.0, 28.0),
+                    (78.0, 28.0),
+                    (78.0, 29.0),
+                    (77.0, 29.0),
+                ]
+            )
             prepared = prep(poly)
 
             # Test a cell inside
@@ -225,16 +228,20 @@ class TestPolyfillQuadtreeRecursion:
             from digipin.polyfill_quadtree import _expand_cell_fully
 
             # Create a polygon
-            poly = Polygon([
-                (77.20, 28.62),
-                (77.23, 28.62),
-                (77.23, 28.64),
-                (77.20, 28.64),
-            ])
+            poly = Polygon(
+                [
+                    (77.20, 28.62),
+                    (77.23, 28.62),
+                    (77.23, 28.64),
+                    (77.20, 28.64),
+                ]
+            )
             prepared = prep(poly)
 
             # Expand a level-6 cell to level-7
-            result = _expand_cell_fully("39J49L", target_precision=7, prepared_poly=prepared)
+            result = _expand_cell_fully(
+                "39J49L", target_precision=7, prepared_poly=prepared
+            )
 
             # Should return list of level-7 codes
             assert isinstance(result, list)
@@ -322,12 +329,14 @@ class TestPolyfillIntegration:
             from digipin import polyfill
 
             # Create Shapely polygon (lon, lat order)
-            poly = Polygon([
-                (77.2200, 28.6300),
-                (77.2210, 28.6300),
-                (77.2210, 28.6290),
-                (77.2200, 28.6290),
-            ])
+            poly = Polygon(
+                [
+                    (77.2200, 28.6300),
+                    (77.2210, 28.6300),
+                    (77.2210, 28.6290),
+                    (77.2200, 28.6290),
+                ]
+            )
 
             result = polyfill(poly, precision=7)
 

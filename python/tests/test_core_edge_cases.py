@@ -76,8 +76,8 @@ class TestEncoderEdgeCases:
         """Test that batch encoding preserves input order."""
         coords = [
             (28.622788, 77.213033),  # Delhi
-            (12.9716, 77.5946),      # Bangalore
-            (19.0760, 72.8777),      # Mumbai
+            (12.9716, 77.5946),  # Bangalore
+            (19.0760, 72.8777),  # Mumbai
         ]
         result = encoder.batch_encode(coords)
 
@@ -379,6 +379,7 @@ class TestCoordinateValidation:
         """Test is_valid_coordinate with special float values."""
         # NaN should be invalid
         import math
+
         assert utils.is_valid_coordinate(math.nan, 77.0) is False
         assert utils.is_valid_coordinate(28.0, math.nan) is False
 

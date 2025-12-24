@@ -27,6 +27,7 @@ class TestVizWithoutFolium:
                 # Force reimport
                 import importlib
                 from digipin import viz
+
                 importlib.reload(viz)
 
                 # Should have received warning
@@ -73,6 +74,7 @@ class TestVizWithFolium:
             # Need to reimport after patching
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             # Test single code
@@ -89,6 +91,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             codes = ["39J49LL8T4", "39J49LL8T5", "39J49LL8T6"]
@@ -102,6 +105,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             codes = ["39J49LL8T4"] * 10
@@ -115,6 +119,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             result = viz.plot_pins("39J49LL8T4", show_bounds=True)
@@ -127,6 +132,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             with warnings.catch_warnings(record=True) as w:
@@ -139,7 +145,10 @@ class TestVizWithFolium:
 
                     # Should have warned about invalid code
                     assert len(w) > 0
-                    assert "Invalid" in str(w[0].message) or "invalid" in str(w[0].message).lower()
+                    assert (
+                        "Invalid" in str(w[0].message)
+                        or "invalid" in str(w[0].message).lower()
+                    )
                 except ValueError:
                     # If it raises ValueError for all invalid, that's also OK
                     pass
@@ -149,6 +158,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             with pytest.raises(ValueError, match="No valid"):
@@ -159,6 +169,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             with warnings.catch_warnings(record=True) as w:
@@ -176,6 +187,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             codes = ["39J49LL8T4", "39J49LL8T5"]
@@ -189,6 +201,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             codes = ["39J49LL8T4"]
@@ -205,6 +218,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             result = viz.plot_neighbors("39J49LL8T4", radius=1)
@@ -220,6 +234,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             output_file = str(tmp_path / "neighbors.html")
@@ -233,6 +248,7 @@ class TestVizWithFolium:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             result = viz.plot_neighbors("39J49LL8T4", include_neighbors=False)
@@ -265,6 +281,7 @@ class TestVizColoringAndLabeling:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             # Codes with different precisions
@@ -280,6 +297,7 @@ class TestVizColoringAndLabeling:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             result = viz.plot_pins("39J49LL8T4", show_labels=False)
@@ -293,6 +311,7 @@ class TestVizColoringAndLabeling:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             result = viz.plot_pins("39J49LL8T4", tiles="Stamen Terrain")
@@ -311,8 +330,9 @@ class TestVizEdgeCases:
     def test_folium_availability_check(self):
         """Test that FOLIUM_AVAILABLE flag is set correctly."""
         from digipin import viz
+
         # Just verify the module imports
-        assert hasattr(viz, 'FOLIUM_AVAILABLE')
+        assert hasattr(viz, "FOLIUM_AVAILABLE")
         assert isinstance(viz.FOLIUM_AVAILABLE, bool)
 
 
@@ -336,6 +356,7 @@ class TestVizZoomCalculation:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             result = viz.plot_pins("39J49LL8T4", zoom=None)
@@ -348,6 +369,7 @@ class TestVizZoomCalculation:
         with patch.dict("sys.modules", {"folium": mock_folium}):
             import importlib
             from digipin import viz
+
             importlib.reload(viz)
 
             result = viz.plot_pins("39J49LL8T4", zoom=12)
