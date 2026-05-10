@@ -5,6 +5,7 @@ Provides interactive map visualization using Folium for exploring DIGIPIN codes
 and their coverage areas.
 """
 
+import html as _html
 from typing import List, Optional, Union, Tuple
 import warnings
 
@@ -277,7 +278,7 @@ def plot_coverage(
     <div style="position: fixed; top: 10px; left: 50px; z-index: 1000;
                 background-color: white; padding: 10px; border: 2px solid grey;
                 border-radius: 5px; font-size: 16px; font-weight: bold;">
-        {title}<br>
+        {_html.escape(title)}<br>
         <span style="font-size: 12px; font-weight: normal;">
             {len(codes)} DIGIPIN codes
         </span>

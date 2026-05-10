@@ -30,7 +30,8 @@ DIGIPIN_ALPHABET = "23456789"  # Numbers: 2,3,4,5,6,7,8,9
 DIGIPIN_ALPHABET += "CFJKLMPT"  # Letters: C,F,J,K,L,M,P,T
 
 # Total: 16 symbols for 4x4 grid subdivision
-assert len(DIGIPIN_ALPHABET) == 16, "Alphabet must have exactly 16 symbols"
+if len(DIGIPIN_ALPHABET) != 16:
+    raise RuntimeError("DIGIPIN alphabet must have exactly 16 symbols")
 
 # Official spiral anticlockwise labeling pattern (4x4 grid)
 # This is the HEART of DIGIPIN - provides directional properties!

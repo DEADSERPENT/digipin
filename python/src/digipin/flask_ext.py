@@ -362,7 +362,10 @@ def create_digipin_blueprint(url_prefix: str = "/api/digipin"):
         if not is_valid_digipin(code):
             return jsonify({"error": "Invalid DIGIPIN code"}), 400
 
-        radius = int(request.args.get("radius", 1))
+        try:
+            radius = int(request.args.get("radius", 1))
+        except (ValueError, TypeError):
+            return jsonify({"error": "Radius must be an integer"}), 400
 
         if radius < 0 or radius > 100:
             return jsonify({"error": "Radius must be between 0 and 100"}), 400

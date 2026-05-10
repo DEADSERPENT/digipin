@@ -22,7 +22,7 @@ if sys.platform == "win32":
 
         if hasattr(sys.stdout, "buffer"):
             sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
-    except:
+    except Exception:
         pass  # Fallback to ASCII-safe characters if encoding fix fails
 
 from . import (
@@ -111,7 +111,7 @@ def cmd_validate(args):
                 lat, lon = decode(args.code)
                 output["latitude"] = lat
                 output["longitude"] = lon
-            except:
+            except Exception:
                 pass
         elif not valid and args.detailed:
             output["expected_format"] = {"length": 10, "symbols": "23456789CFJKLMPT"}
@@ -124,7 +124,7 @@ def cmd_validate(args):
                 print(f"\nDecodes to:")
                 print(f"  Latitude:  {lat}")
                 print(f"  Longitude: {lon}")
-            except:
+            except Exception:
                 pass
         else:
             print("✗ Invalid DIGIPIN code")
