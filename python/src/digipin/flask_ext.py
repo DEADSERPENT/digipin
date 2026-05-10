@@ -41,7 +41,6 @@ from .utils import is_valid_digipin, is_valid_coordinate
 from .decoder import decode
 from .encoder import encode
 
-
 # -------------------------------------------------------------------------
 # SQLAlchemy Custom Type
 # -------------------------------------------------------------------------

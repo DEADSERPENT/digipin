@@ -696,6 +696,7 @@ const _exports = {
     polyfill,
     getPolygonBoundary,
     // Constants
+    ALPHABET: DIGIPIN_ALPHABET,  // alias used by test suite
     INDIA_BOUNDS,
     DIGIPIN_ALPHABET,
     DIGIPIN_LEVELS,

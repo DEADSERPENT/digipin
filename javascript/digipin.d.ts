@@ -77,6 +77,9 @@ export type PolyfillAlgorithm = 'quadtree' | 'grid';
 /** India's bounding box */
 export const INDIA_BOUNDS: IndiaBounds;
 
+/** Valid DIGIPIN alphabet (16 characters) — alias for DIGIPIN_ALPHABET */
+export const ALPHABET: string;
+
 /** Valid DIGIPIN alphabet (16 characters) */
 export const DIGIPIN_ALPHABET: string;
 
