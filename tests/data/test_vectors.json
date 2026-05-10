@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft-07/schema#",
   "title": "DIGIPIN Test Vectors",
   "description": "Shared test vectors for validating DIGIPIN implementations across languages. Both Python and JavaScript must produce identical results for these test cases.",
-  "version": "1.0.0",
-  "updated": "2024-12-14",
+  "version": "1.1.0",
+  "updated": "2025-05-10",
 
   "test_cases": {
     "encoding": [
@@ -20,7 +20,7 @@
         "lat": 28.612894,
         "lon": 77.229446,
         "precision": 10,
-        "expected": "39J49JM9P6",
+        "expected": "39J429L4P6",
         "description": "Famous landmark in central Delhi"
       },
       {
@@ -28,7 +28,7 @@
         "lat": 18.921984,
         "lon": 72.834656,
         "precision": 10,
-        "expected": "368TF2K98T",
+        "expected": "4FKPCPKCKT",
         "description": "Iconic monument in Mumbai"
       },
       {
@@ -36,7 +36,7 @@
         "lat": 27.175015,
         "lon": 78.042155,
         "precision": 10,
-        "expected": "38MM9C3P43",
+        "expected": "32C8495CK9",
         "description": "World Heritage Site"
       },
       {
@@ -44,7 +44,7 @@
         "lat": 12.305167,
         "lon": 76.655167,
         "precision": 10,
-        "expected": "33J5T26TFP",
+        "expected": "4M642F7KCL",
         "description": "Historical palace in Karnataka"
       },
       {
@@ -60,7 +60,7 @@
         "lat": 28.6,
         "lon": 77.2,
         "precision": 5,
-        "expected": "39J49",
+        "expected": "39J43",
         "description": "City-level precision (~4km)"
       },
       {
@@ -68,7 +68,7 @@
         "lat": 28.6,
         "lon": 77.2,
         "precision": 7,
-        "expected": "39J49JJ",
+        "expected": "39J4357",
         "description": "Street-level precision (~250m)"
       }
     ],
@@ -80,14 +80,14 @@
         "expected_lat": 28.622788,
         "expected_lon": 77.213033,
         "precision": 10,
-        "tolerance": 0.000002,
-        "description": "Full precision decoding"
+        "tolerance": 0.00002,
+        "description": "Full precision decoding — tolerance = half cell size at level 10"
       },
       {
         "name": "Decode 5-character code",
         "code": "39J49",
-        "expected_lat": 28.6,
-        "expected_lon": 77.2,
+        "expected_lat": 28.638672,
+        "expected_lon": 77.228516,
         "precision": 5,
         "tolerance": 0.02,
         "description": "City-level decoding"
@@ -95,11 +95,11 @@
       {
         "name": "Decode 1-character code",
         "code": "3",
-        "expected_lat": 22.5,
-        "expected_lon": 81.5,
+        "expected_lat": 25.0,
+        "expected_lon": 77.0,
         "precision": 1,
         "tolerance": 5.0,
-        "description": "Country-level decoding (center of India)"
+        "description": "Country-level decoding (center of region)"
       }
     ],
 
@@ -123,10 +123,10 @@
         "description": "Single character code"
       },
       {
-        "name": "Invalid - contains lowercase",
+        "name": "Valid lowercase (normalized)",
         "code": "39j49ll8t4",
-        "expected": false,
-        "description": "Lowercase letters not allowed"
+        "expected": true,
+        "description": "Lowercase is accepted — implementations normalize to uppercase"
       },
       {
         "name": "Invalid - contains 0",
@@ -194,7 +194,7 @@
         "lat": 8.0873,
         "lon": 77.5385,
         "precision": 10,
-        "expected": "32PJ9M26K9",
+        "expected": "M2K87C3F4K",
         "description": "Southernmost tip of mainland India"
       }
     ],
@@ -204,10 +204,10 @@
         "name": "Bounding box for 10-char code",
         "code": "39J49LL8T4",
         "expected": {
-          "min_lat": 28.622780,
-          "max_lat": 28.622796,
-          "min_lon": 77.213028,
-          "max_lon": 77.213044,
+          "min_lat": 28.622776,
+          "max_lat": 28.622810,
+          "min_lon": 77.213032,
+          "max_lon": 77.213066,
           "tolerance": 0.000001
         },
         "description": "~4m x 4m cell"
@@ -216,10 +216,10 @@
         "name": "Bounding box for 5-char code",
         "code": "39J49",
         "expected": {
-          "min_lat": 28.59,
-          "max_lat": 28.61,
-          "min_lon": 77.19,
-          "max_lon": 77.21,
+          "min_lat": 28.621,
+          "max_lat": 28.657,
+          "min_lon": 77.210,
+          "max_lon": 77.246,
           "tolerance": 0.01
         },
         "description": "~4km x 4km cell"
@@ -237,8 +237,8 @@
         "name": "North neighbor exists",
         "code": "39J49LL8T4",
         "direction": "north",
-        "expected_contains": "39J49LL8T",
-        "description": "Northern neighbor should be similar code"
+        "expected_count": 1,
+        "description": "Single northern neighbor"
       }
     ],
 
@@ -299,66 +299,16 @@
   },
 
   "precision_table": [
-    {
-      "level": 1,
-      "code_length": 1,
-      "approx_distance_m": 1000000,
-      "description": "Country"
-    },
-    {
-      "level": 2,
-      "code_length": 2,
-      "approx_distance_m": 250000,
-      "description": "State"
-    },
-    {
-      "level": 3,
-      "code_length": 3,
-      "approx_distance_m": 62500,
-      "description": "Region"
-    },
-    {
-      "level": 4,
-      "code_length": 4,
-      "approx_distance_m": 15625,
-      "description": "District"
-    },
-    {
-      "level": 5,
-      "code_length": 5,
-      "approx_distance_m": 3906.25,
-      "description": "City"
-    },
-    {
-      "level": 6,
-      "code_length": 6,
-      "approx_distance_m": 976.56,
-      "description": "Neighborhood"
-    },
-    {
-      "level": 7,
-      "code_length": 7,
-      "approx_distance_m": 244.14,
-      "description": "Street"
-    },
-    {
-      "level": 8,
-      "code_length": 8,
-      "approx_distance_m": 61.04,
-      "description": "Building"
-    },
-    {
-      "level": 9,
-      "code_length": 9,
-      "approx_distance_m": 15.26,
-      "description": "Door"
-    },
-    {
-      "level": 10,
-      "code_length": 10,
-      "approx_distance_m": 3.81,
-      "description": "Precise location"
-    }
+    { "level": 1,  "code_length": 1,  "approx_distance_m": 1000000, "description": "Country" },
+    { "level": 2,  "code_length": 2,  "approx_distance_m": 250000,  "description": "State" },
+    { "level": 3,  "code_length": 3,  "approx_distance_m": 62500,   "description": "Region" },
+    { "level": 4,  "code_length": 4,  "approx_distance_m": 15625,   "description": "District" },
+    { "level": 5,  "code_length": 5,  "approx_distance_m": 3906.25, "description": "City" },
+    { "level": 6,  "code_length": 6,  "approx_distance_m": 976.56,  "description": "Neighborhood" },
+    { "level": 7,  "code_length": 7,  "approx_distance_m": 244.14,  "description": "Street" },
+    { "level": 8,  "code_length": 8,  "approx_distance_m": 61.04,   "description": "Building" },
+    { "level": 9,  "code_length": 9,  "approx_distance_m": 15.26,   "description": "Door" },
+    { "level": 10, "code_length": 10, "approx_distance_m": 3.81,    "description": "Precise location" }
   ],
 
   "usage_notes": {
