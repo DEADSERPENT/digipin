@@ -2,6 +2,17 @@
 
 All notable changes to the JavaScript implementation will be documented in this file.
 
+## [1.3.0] - 2026-05-23
+
+### Added - Neighbor Discovery
+
+- `getNeighbors()` function to get all 8 surrounding DIGIPIN codes
+- `getRing()` for expanding rings of neighbors at a given distance
+- `getDisk()` for all codes within a radius
+- Matches Python implementation's neighbor discovery API
+
+---
+
 ## [1.2.0] - 2025-12-15
 
 ### Current Status
@@ -109,11 +120,11 @@ console.log(digipin.isValid('39J49LL8T4')); // true
 
 ## Comparison: JavaScript vs Python
 
-| Feature | JavaScript (v1.2.0) | Python (v1.8.0) |
+| Feature | JavaScript (v1.3.0) | Python (v1.9.0) |
 |---------|---------------------|-----------------|
 | Core Functions | ✅ | ✅ |
 | Batch Operations | ✅ | ✅ |
-| Neighbor Discovery | ❌ (planned v1.3) | ✅ |
+| Neighbor Discovery | ✅ | ✅ |
 | Polygon Polyfill | ❌ (future) | ✅ |
 | Framework Integration | ❌ (planned) | ✅ (Django, FastAPI, Pandas) |
 | Visualization | ❌ (planned) | ✅ (Folium maps) |

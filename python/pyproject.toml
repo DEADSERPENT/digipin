@@ -7,8 +7,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "digipinpy"
-version = "1.8.0"
-description = "Official Python implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
+version = "1.9.0"
+description = "Implementation of DIGIPIN - India's national geocoding standard by Department of Posts"
 readme = "README.md"
 requires-python = ">=3.7"
 license = {text = "MIT"}

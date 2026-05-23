@@ -2,7 +2,7 @@
 
 # 🇮🇳 DIGIPIN-Py
 
-**Official Python implementation of India's national geocoding standard**
+**Implementation of India's national geocoding standard**
 
 [![PyPI version](https://img.shields.io/pypi/v/digipinpy.svg?color=blue)](https://pypi.org/project/digipinpy/)
 [![Python Version](https://img.shields.io/pypi/pyversions/digipinpy.svg)](https://pypi.org/project/digipinpy/)

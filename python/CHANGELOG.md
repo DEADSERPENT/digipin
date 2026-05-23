@@ -2,6 +2,17 @@
 
 All notable changes to the Python implementation will be documented in this file.
 
+## [1.9.0] - 2026-05-23
+
+### Added - Validation & CI Improvements
+
+- Input validation for `encode()`, `decode()`, and `isValid()` across all integrations
+- Unified validation in Python and JavaScript with consistent error messages
+- CI pipeline now runs validation tests for both implementations together
+- Minor bug fixes and edge case handling for boundary coordinates
+
+---
+
 ## [1.8.0] - 2025-12-15
 
 ### Added – Optional Cython Performance Backend
