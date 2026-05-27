@@ -161,7 +161,7 @@ def plot_pins(
         if show_labels:
             popup_html = f"""
             <div style="font-family: monospace; font-size: 14px;">
-                <b>DIGIPIN:</b> {code}<br>
+                <b>DIGIPIN:</b> {_html.escape(code)}<br>
                 <b>Lat:</b> {lat:.6f}<br>
                 <b>Lon:</b> {lon:.6f}<br>
                 <b>Precision:</b> Level {precision}
@@ -337,7 +337,7 @@ def plot_neighbors(
     # Plot center code with different style
     folium.Marker(
         location=[lat, lon],
-        popup=f"<b>Center:</b> {center_code}",
+        popup=f"<b>Center:</b> {_html.escape(center_code)}",
         icon=folium.Icon(color="red", icon="info-sign"),
     ).add_to(m)
 

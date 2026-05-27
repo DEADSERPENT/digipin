@@ -16,7 +16,7 @@ Then visit:
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from digipin.flask_ext import DigipinType, create_digipin_blueprint, validate_coordinates_request
-from digipin import encode, decode, get_neighbors
+from digipin import encode, decode, get_neighbors, is_valid as is_valid_digipin
 
 # -------------------------------------------------------------------------
 # App Setup
@@ -201,12 +201,16 @@ def warehouses_in_region(region_code):
     Example: GET /warehouses/region/39J4
     Returns all warehouses in the 39J4 region.
     """
+    code = region_code.upper()
+    if not is_valid_digipin(code):
+        return jsonify({'error': 'Invalid DIGIPIN region code'}), 400
+
     warehouses = Warehouse.query.filter(
-        Warehouse.code.like(f'{region_code.upper()}%')
+        Warehouse.code.like(f'{code}%')
     ).all()
 
     return jsonify({
-        'region': region_code.upper(),
+        'region': code,
         'count': len(warehouses),
         'warehouses': [w.to_dict() for w in warehouses]
     })
